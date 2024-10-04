@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirmação de Registro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="confirmation-container">
+        <h1>Registro Bem-Sucedido!</h1>
+        <p>Você foi registrado com sucesso. Agora você pode fazer login.</p>
+        <a href="{{ url_for('login') }}">
+            <button type="button">Ir para Login</button>
+        </a>
+    </div>
+</body>
+</html>
