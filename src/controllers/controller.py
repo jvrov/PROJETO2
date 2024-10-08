@@ -53,7 +53,7 @@ class LoginController(MethodView):
         return render_template('public/login.html')
 
     def post(self):
-        email = request.form['email']  # Usando email para login
+        email = request.form['email']  
         password = request.form['password']
 
         connection = pymysql.connect(
