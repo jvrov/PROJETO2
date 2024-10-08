@@ -1,125 +1,130 @@
 /* Reseta alguns estilos padrão do navegador */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif; /* Fonte padrão para o corpo */
-    margin: 0; /* Remove a margem padrão do corpo */
-    padding: 20px; /* Adiciona espaçamento ao redor do corpo */
-    position: relative; /* Permite o posicionamento absoluto dos elementos */
-    height: 100vh; /* Altura total da tela */
-    background: linear-gradient(to right, #131313, #131313); /* Gradiente de fundo */
-  }
-  
-  a {
-    text-decoration: none; /* Remove o sublinhado dos links */
-  }
-  
-  button {
-    background-color: #A020F0; /* Cor de fundo */
-    border: none; /* Remove a borda padrão */
-    color: white; /* Cor do texto */
-    padding: 10px 20px; /* Espaçamento interno */
-    text-align: center; /* Alinha o texto ao centro */
-    text-decoration: none; /* Remove qualquer decoração de texto */
-    display: inline-block; /* Exibe os botões como elementos em linha */
-    font-size: 16px; /* Tamanho da fonte */
-    margin: 10px; /* Margem ao redor dos botões */
-    cursor: pointer; /* Muda o cursor para uma mãozinha ao passar por cima */
-    border-radius: 5px; /* Borda arredondada */
-    transition: background-color 0.3s; /* Transição suave para a cor de fundo */
-  }
-  
-  button:hover {
-    background-color: #8B008B; /* Cor de fundo ao passar o mouse */
-  }
-  
-  .button-container {
-    position: absolute; /* Permite o posicionamento absoluto dentro do body */
-    top: 15px; /* Distância do topo da tela (abaixo do título) */
-    right: 20px; /* Distância do lado direito da tela */
-  }
-  
-  .horizontal-line {
-    border: 0; /* Remove a borda padrão do hr */
-    height: 2px; /* Espessura da linha */
-    background: #050505; /* Cor da linha */
-    margin: 20px 0; /* Margem: 20px acima, 0 abaixo */
-    width: 100%; /* Garante que a linha ocupe a largura total da tela */
-    position: absolute; /* Permite posicionamento absoluto */
-    top: 60px; /* Distância do topo da tela para a linha */
-    left: 0; /* Alinha a linha ao lado esquerdo da tela */
-  }
-  
-  .title {
-    position: absolute; /* Permite o posicionamento absoluto dentro do body */
-    top: 20px; /* Distância do topo da tela */
-    left: 20px; /* Distância do lado esquerdo da tela */
-    font-size: 24px; /* Tamanho da fonte */
-    font-weight: bold; /* Fonte em negrito */
-    color: #A020F0; /* Cor do texto */
-    background-color: #131313; /* Cor de fundo do botão */
-    padding: 10px 20px; /* Espaçamento interno do botão */
-    border-radius: 5px; /* Borda arredondada */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Sombra ao redor do botão */
-    display: inline-block; /* Exibe como botão em linha */
-    border: none; /* Remove a borda do link */
-  }
-  
-  .title:hover {
-    background-color: #313131; /* Cor de fundo ao passar o mouse */
-  }
-  
-  .form-container {
-    max-width: 400px; /* Largura máxima do contêiner */
-    margin: 0 auto; /* Centraliza o contêiner horizontalmente */
-    padding: 20px; /* Adiciona espaçamento interno */
-    background: white; /* Cor de fundo */
-    border-radius: 8px; /* Borda arredondada */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra ao redor do contêiner */
-    position: absolute; /* Permite o posicionamento absoluto dentro do body */
-    top: 100px; /* Distância do topo da tela */
-    left: 50%; /* Centraliza horizontalmente */
-    transform: translateX(-50%); /* Ajusta o contêiner para centralizar corretamente */
-  }
-  
-  .form-container h2 {
-    margin-bottom: 20px; /* Espaçamento abaixo do título */
-    font-size: 24px; /* Tamanho da fonte do título */
-  }
-  
-  .form-container label {
-    display: block; /* Faz com que os rótulos ocupem toda a largura disponível */
-    margin-bottom: 8px; /* Espaçamento abaixo dos rótulos */
-    font-weight: bold; /* Fonte em negrito */
-  }
-  
-  .form-container input {
-    width: 100%; /* Largura total dos campos de entrada */
-    padding: 10px; /* Espaçamento interno dos campos */
-    margin-bottom: 15px; /* Espaçamento abaixo dos campos */
-    border: 1px solid #ddd; /* Borda ao redor dos campos */
-    border-radius: 5px; /* Borda arredondada */
-  }
-  
-  .form-container button {
-    background-color: #A020F0; /* Cor de fundo */
-    border: none; /* Remove a borda padrão */
-    color: white; /* Cor do texto */
-    padding: 10px 20px; /* Espaçamento interno */
-    text-align: center; /* Alinha o texto ao centro */
-    text-decoration: none; /* Remove qualquer decoração de texto */
-    display: inline-block; /* Exibe o botão como elemento em linha */
-    font-size: 16px; /* Tamanho da fonte */
-    margin-top: 10px; /* Margem acima do botão */
-    cursor: pointer; /* Muda o cursor para uma mãozinha ao passar por cima */
-    border-radius: 5px; /* Borda arredondada */
-    transition: background-color 0.3s; /* Transição suave para a cor de fundo */
-  }
-  
-  .form-container button:hover {
-    background-color: #8B008B; /* Cor de fundo ao passar o mouse */
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif; /* Fonte padrão para o corpo */
+  margin: 0; /* Remove a margem padrão do corpo */
+  padding: 20px; /* Adiciona espaçamento ao redor do corpo */
+  position: relative; /* Permite o posicionamento absoluto dos elementos */
+  height: 100vh; /* Altura total da tela */
+  background: linear-gradient(to right, #1a1a1a, #333); /* Gradiente de fundo */
+  color: white; /* Cor do texto padrão */
+}
+
+a {
+  text-decoration: none; /* Remove o sublinhado dos links */
+}
+
+button {
+  background-color: #28a745; /* Cor de fundo verde */
+  border: none; /* Remove a borda padrão */
+  color: white; /* Cor do texto */
+  padding: 12px 24px; /* Espaçamento interno */
+  text-align: center; /* Alinha o texto ao centro */
+  text-decoration: none; /* Remove qualquer decoração de texto */
+  display: inline-block; /* Exibe os botões como elementos em linha */
+  font-size: 16px; /* Tamanho da fonte */
+  margin: 10px; /* Margem ao redor dos botões */
+  cursor: pointer; /* Muda o cursor para uma mãozinha ao passar por cima */
+  border-radius: 5px; /* Borda arredondada */
+  transition: background-color 0.3s, transform 0.3s; /* Transição suave para a cor de fundo */
+}
+
+button:hover {
+  background-color: #218838; /* Cor de fundo ao passar o mouse */
+  transform: scale(1.05); /* Leve aumento ao passar o mouse */
+}
+
+.button-container {
+  position: absolute; /* Permite o posicionamento absoluto dentro do body */
+  top: 15px; /* Distância do topo da tela (abaixo do título) */
+  right: 20px; /* Distância do lado direito da tela */
+}
+
+.horizontal-line {
+  border: 0; /* Remove a borda padrão do hr */
+  height: 2px; /* Espessura da linha */
+  background: #444; /* Cor da linha */
+  margin: 20px 0; /* Margem: 20px acima, 0 abaixo */
+  width: 100%; /* Garante que a linha ocupe a largura total da tela */
+  position: absolute; /* Permite posicionamento absoluto */
+  top: 60px; /* Distância do topo da tela para a linha */
+  left: 0; /* Alinha a linha ao lado esquerdo da tela */
+}
+
+.title {
+  position: absolute; /* Permite o posicionamento absoluto dentro do body */
+  top: 20px; /* Distância do topo da tela */
+  left: 20px; /* Distância do lado esquerdo da tela */
+  font-size: 28px; /* Tamanho da fonte */
+  font-weight: bold; /* Fonte em negrito */
+  color: #FFD700; /* Cor dourada para destaque */
+  background-color: #131313; /* Cor de fundo do título */
+  padding: 10px 20px; /* Espaçamento interno do título */
+  border-radius: 5px; /* Borda arredondada */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra ao redor do título */
+  display: inline-block; /* Exibe como botão em linha */
+  border: none; /* Remove a borda do link */
+}
+
+.title:hover {
+  background-color: #313131; /* Cor de fundo ao passar o mouse */
+}
+
+.form-container {
+  max-width: 400px; /* Largura máxima do contêiner */
+  margin: 0 auto; /* Centraliza o contêiner horizontalmente */
+  padding: 20px; /* Adiciona espaçamento interno */
+  background: rgba(255, 255, 255, 0.1); /* Fundo semitransparente */
+  border-radius: 8px; /* Borda arredondada */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Sombra ao redor do contêiner */
+  position: absolute; /* Permite o posicionamento absoluto dentro do body */
+  top: 100px; /* Distância do topo da tela */
+  left: 50%; /* Centraliza horizontalmente */
+  transform: translateX(-50%); /* Ajusta o contêiner para centralizar corretamente */
+}
+
+.form-container h2 {
+  margin-bottom: 20px; /* Espaçamento abaixo do título */
+  font-size: 24px; /* Tamanho da fonte do título */
+  color: #FFD700; /* Cor dourada para o título */
+}
+
+.form-container label {
+  display: block; /* Faz com que os rótulos ocupem toda a largura disponível */
+  margin-bottom: 8px; /* Espaçamento abaixo dos rótulos */
+  font-weight: bold; /* Fonte em negrito */
+}
+
+.form-container input {
+  width: 100%; /* Largura total dos campos de entrada */
+  padding: 10px; /* Espaçamento interno dos campos */
+  margin-bottom: 15px; /* Espaçamento abaixo dos campos */
+  border: 1px solid #ddd; /* Borda ao redor dos campos */
+  border-radius: 5px; /* Borda arredondada */
+  background-color: #222; /* Fundo escuro para os campos */
+  color: white; /* Cor do texto nos campos */
+}
+
+.form-container button {
+  background-color: #28a745; /* Cor de fundo verde */
+  border: none; /* Remove a borda padrão */
+  color: white; /* Cor do texto */
+  padding: 12px 24px; /* Espaçamento interno */
+  text-align: center; /* Alinha o texto ao centro */
+  text-decoration: none; /* Remove qualquer decoração de texto */
+  display: inline-block; /* Exibe o botão como elemento em linha */
+  font-size: 16px; /* Tamanho da fonte */
+  margin-top: 10px; /* Margem acima do botão */
+  cursor: pointer; /* Muda o cursor para uma mãozinha ao passar por cima */
+  border-radius: 5px; /* Borda arredondada */
+  transition: background-color 0.3s; /* Transição suave para a cor de fundo */
+}
+
+.form-container button:hover {
+  background-color: #218838; /* Cor de fundo ao passar o mouse */
+}
