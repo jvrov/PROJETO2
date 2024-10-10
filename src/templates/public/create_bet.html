@@ -1,21 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="title">Criar Aposta</div>
 
-    <form action="{{ url_for('create_bet') }}" method="POST">
-        <label for="bet_name">Nome da Aposta:</label>
-        <input type="text" id="bet_name" name="bet_name" required>
+<h1>Criar Novo Evento</h1>
 
-        <label for="bet_value">Valor da Aposta:</label>
-        <input type="number" id="bet_value" name="bet_value" required>
-
-        <button type="submit">Criar Aposta</button>
-    </form>
-
-    <div class="button-container">
-        <a href="{{ url_for('home') }}">
-            <button type="button">Voltar para Home</button>
-        </a>
+<form action="{{ url_for('create_bet') }}" method="POST">
+    <div class="form-group">
+        <label for="title">Título do Evento:</label>
+        <input type="text" id="title" name="title" maxlength="50" required>
     </div>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <div class="form-group">
+        <label for="description">Descrição Curta (150 caracteres):</label>
+        <textarea id="description" name="description" maxlength="150" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="bet_value">Valor de cada cota (mínimo de R$ 1,00):</label>
+        <input type="number" id="bet_value" name="bet_value" step="0.01" min="1" required>
+    </div>
+
+    <div class="form-group">
+        <label for="start_time">Data e Hora de Início das Apostas:</label>
+        <input type="datetime-local" id="start_time" name="start_time" required>
+    </div>
+
+    <div class="form-group">
+        <label for="end_time">Data e Hora de Fim das Apostas:</label>
+        <input type="datetime-local" id="end_time" name="end_time" required>
+    </div>
+
+    <div class="form-group">
+        <label for="event_date">Data do Evento (Dia, Mês, Ano):</label>
+        <input type="date" id="event_date" name="event_date" required>
+    </div>
+
+    <button type="submit">Criar Evento</button>
+</form>
+
+<div class="button-container">
+    <a href="{{ url_for('home') }}">
+        <button type="button">Voltar para Home</button>
+    </a>
+</div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
 {% endblock %}

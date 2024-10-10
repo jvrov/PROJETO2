@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Eventos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Eventos Cadastrados</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% if events %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descrição</th>
+                        <th>Valor da Cota</th>
+                        <th>Início das Apostas</th>
+                        <th>Fim das Apostas</th>
+                        <th>Data do Evento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in events %}
+                    <tr>
+                        <td>{{ evento[1] }}</td> <!-- Assumindo que o título é o segundo campo -->
+                        <td>{{ evento[2] }}</td> <!-- Assumindo que a descrição é o terceiro campo -->
+                        <td>R$ {{ evento[3] }}</td> <!-- Assumindo que o valor da cota é o quarto campo -->
+                        <td>{{ evento[4] }}</td> <!-- Assumindo que o início das apostas é o quinto campo -->
+                        <td>{{ evento[5] }}</td> <!-- Assumindo que o fim das apostas é o sexto campo -->
+                        <td>{{ evento[6] }}</td> <!-- Assumindo que a data do evento é o sétimo campo -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Nenhum evento encontrado.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

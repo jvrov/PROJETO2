@@ -75,6 +75,7 @@ button:hover {
   background-color: #313131; /* Cor de fundo ao passar o mouse */
 }
 
+/* Atualização do estilo do formulário */
 .form-container {
   max-width: 400px; /* Largura máxima do contêiner */
   margin: 0 auto; /* Centraliza o contêiner horizontalmente */
@@ -100,7 +101,8 @@ button:hover {
   font-weight: bold; /* Fonte em negrito */
 }
 
-.form-container input {
+.form-container input, 
+.form-container textarea {
   width: 100%; /* Largura total dos campos de entrada */
   padding: 10px; /* Espaçamento interno dos campos */
   margin-bottom: 15px; /* Espaçamento abaixo dos campos */
@@ -108,6 +110,10 @@ button:hover {
   border-radius: 5px; /* Borda arredondada */
   background-color: #222; /* Fundo escuro para os campos */
   color: white; /* Cor do texto nos campos */
+}
+
+.form-container textarea {
+  resize: none; /* Impede o redimensionamento do textarea */
 }
 
 .form-container button {

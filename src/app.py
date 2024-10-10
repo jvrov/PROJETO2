@@ -8,42 +8,26 @@ from src.controllers.controller import (
     LoginConfirmationController,
     HomeController,
     LogoutController,
-    CreateBetController
+    CreateBetController,
+    ListEventsController,
+    ListBetsController
 )
 
 app = Flask(__name__)
 app.secret_key = '1234'
 
-
-routes = {
-    "ola_route": "/",
-    "olaController": OlaController.as_view('ola_controller'),
-    "register_route": "/register",
-    "registerController": RegisterController.as_view('register'),
-    "login_route": "/login",
-    "loginController": LoginController.as_view('login'),
-    "confirmation_route": "/confirmation",
-    "confirmationController": ConfirmationController.as_view('confirmation'),
-    "confirmationlogin_route": "/confirmationlogin",
-    "confirmationloginController": LoginConfirmationController.as_view('confirmationlogin'),
-    "home_route": "/home",
-    "homeController": HomeController.as_view('home'),
-    "create_bet_route": "/create_bet", 
-    "createBetController": CreateBetController.as_view('create_bet'),
-    "logout_route": "/logout", 
-    "logoutController": LogoutController.as_view('logout')
-}
-
-# rotas
-app.add_url_rule(routes["ola_route"], view_func=routes["olaController"])
-app.add_url_rule(routes["register_route"], view_func=routes["registerController"])
-app.add_url_rule(routes["login_route"], view_func=routes["loginController"])
-app.add_url_rule(routes["confirmation_route"], view_func=routes["confirmationController"])
-app.add_url_rule(routes["confirmationlogin_route"], view_func=routes["confirmationloginController"])
-app.add_url_rule(routes["home_route"], view_func=routes["homeController"])  
-app.add_url_rule(routes["create_bet_route"], view_func=routes["createBetController"])  
-app.add_url_rule(routes["logout_route"], view_func=routes["logoutController"])  
-
+# Rotas e seus controladores
+app.add_url_rule('/', view_func=OlaController.as_view('ola_controller'))
+app.add_url_rule('/register', view_func=RegisterController.as_view('register'))
+app.add_url_rule('/login', view_func=LoginController.as_view('login'))
+app.add_url_rule('/confirmation', view_func=ConfirmationController.as_view('confirmation'))
+app.add_url_rule('/confirmationlogin', view_func=LoginConfirmationController.as_view('confirmationlogin'))
+app.add_url_rule('/home', view_func=HomeController.as_view('home'))
+app.add_url_rule('/create_bet', view_func=CreateBetController.as_view('create_bet'))
+app.add_url_rule('/logout', view_func=LogoutController.as_view('logout'))
+app.add_url_rule('/confirm_bet', view_func=CreateBetController.as_view('confirm_bet'))  # Supondo que você quer usar o mesmo controlador para confirmar a aposta
+app.add_url_rule('/listar_eventos', view_func=ListEventsController.as_view('listar_eventos'))
+app.add_url_rule('/listar_bets', view_func=ListBetsController.as_view('listar_bets'))  # Corrigido o nome da rota para refletir corretamente o controlador
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="title">Aposta Criada com Sucesso</div>
+    <p>Nome da Aposta: {{ bet_name }}</p>
+    <p>Valor da Aposta: {{ bet_value }}</p>
+
+    <div class="button-container">
+        <a href="{{ url_for('home') }}">
+            <button type="button">Voltar para Home</button>
+        </a>
+        <a href="{{ url_for('list_bets') }}">
+            <button type="button">Ver Todas as Apostas</button>
+        </a>
+    </div>
+{% endblock %}

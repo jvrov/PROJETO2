@@ -4,15 +4,21 @@
 <h1>Bem-vindo à Home!</h1>
 <p>Você está logado e pode explorar as funcionalidades do site.</p>
 
-<!-- Adicione mais conteúdo e botões conforme necessário -->
+
 <a href="{{ url_for('create_bet') }}">
     <button type="button">Criar Aposta</button>
 </a>
+
+
+<a href="{{ url_for('listar_eventos') }}">
+    <button type="button">Listar Eventos</button>
+</a>
+
+
 
 <a href="{{ url_for('logout') }}">
     <button type="button">Logout</button>
 </a>
 
-<!-- Link para o CSS -->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 {% endblock %}
