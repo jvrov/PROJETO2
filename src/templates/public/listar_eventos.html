@@ -4,24 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Eventos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Eventos Cadastrados</h1>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul class="flashes">
-                    {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
+        <div class="button-container">
+            <a href="{{ url_for('home') }}">
+                <button type="button" class="back-button">Voltar para Home</button>
+            </a>
+        </div>
+
+        <h1 class="title">Eventos Cadastrados</h1>
+        
 
         {% if events %}
-            <table>
+            <table class="event-table">
                 <thead>
                     <tr>
                         <th>Título</th>
@@ -35,18 +33,18 @@
                 <tbody>
                     {% for evento in events %}
                     <tr>
-                        <td>{{ evento[1] }}</td> <!-- Assumindo que o título é o segundo campo -->
-                        <td>{{ evento[2] }}</td> <!-- Assumindo que a descrição é o terceiro campo -->
-                        <td>R$ {{ evento[3] }}</td> <!-- Assumindo que o valor da cota é o quarto campo -->
-                        <td>{{ evento[4] }}</td> <!-- Assumindo que o início das apostas é o quinto campo -->
-                        <td>{{ evento[5] }}</td> <!-- Assumindo que o fim das apostas é o sexto campo -->
-                        <td>{{ evento[6] }}</td> <!-- Assumindo que a data do evento é o sétimo campo -->
+                        <td>{{ evento[1] }}</td> <!-- Título do evento -->
+                        <td>{{ evento[2] }}</td> <!-- Descrição do evento -->
+                        <td>R$ {{ evento[3] }}</td> <!-- Valor da cota -->
+                        <td>{{ evento[4] }}</td> <!-- Início das apostas -->
+                        <td>{{ evento[5] }}</td> <!-- Fim das apostas -->
+                        <td>{{ evento[6] }}</td> <!-- Data do evento -->
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         {% else %}
-            <p>Nenhum evento encontrado.</p>
+            <p class="no-events">Nenhum evento encontrado.</p>
         {% endif %}
     </div>
 </body>

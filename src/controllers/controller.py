@@ -18,20 +18,30 @@ class RegisterController(MethodView):
         password = request.form['password']
         birthdate = request.form['birthdate']
 
+
+        print("Dados recebidos:", username, email, password, birthdate)  # Adicione isto
+
+        if not username or not email or not password or not birthdate:
+            flash('Todos os campos são obrigatórios.', 'danger')
+            return redirect(url_for('register'))
+
         connection = pymysql.connect(
             host='localhost',
             user='root',
             password='',
             db='db_cadastro'
         )
+        
         try:
             with connection.cursor() as cursor:
                 cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
                 existing_user = cursor.fetchone()
-
+                print("Inserindo novo usuárioaa")  # Adicione isto
                 if existing_user:
                     flash('Usuário já existe.', 'danger')
                     return redirect(url_for('register'))
+
+                print("Inserindo novo usuário")  # Adicione isto
 
                 cursor.execute(
                     "INSERT INTO users (username, email, password, birthdate) VALUES (%s, %s, %s, %s)",
@@ -42,11 +52,13 @@ class RegisterController(MethodView):
                 return redirect(url_for('confirmation'))
 
         except Exception as e:
+            print(f'Ocorreu um erro: {str(e)}')  # Adicione isto
             flash(f'Ocorreu um erro: {str(e)}', 'danger')
             return redirect(url_for('register'))
 
         finally:
             connection.close()
+
 
 
 class LoginController(MethodView):
@@ -69,11 +81,13 @@ class LoginController(MethodView):
             user = cursor.fetchone()
 
         if user:
+            session['user_id'] = user[0]  # Armazena o ID do usuário na sessão
             flash('Login bem-sucedido!', 'success')
             return redirect(url_for('confirmationlogin')) 
         else:
             flash('Email ou senha incorretos.', 'danger')
             return redirect(url_for('login'))
+        
 
 
 
@@ -97,6 +111,36 @@ class LoginConfirmationController(MethodView):
 class HomeController(MethodView):
     def get(self):
         return render_template('public/home.html')
+    def get(self):
+        # Simulação de dados de destaque para eventos
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='db_cadastro'
+        )
+
+        try:
+            with connection.cursor() as cursor:
+                # Eventos próximos de vencer
+                cursor.execute("SELECT * FROM events WHERE fim_apostas > NOW() ORDER BY fim_apostas ASC LIMIT 5")
+                eventos_vencendo = cursor.fetchall()
+
+                # Eventos mais apostados (Simulando ranking por número de apostas)
+                cursor.execute("SELECT * FROM events ORDER BY num_apostas DESC LIMIT 5")
+                eventos_mais_apostados = cursor.fetchall()
+
+            # Categorias automáticas
+            categorias = ['Olimpíada', 'Catástrofes', 'Eleições', 'Bolsa de Valores']
+
+            return render_template('public/home.html')
+
+        except Exception as e:
+            flash(f'Ocorreu um erro ao carregar a página inicial: {str(e)}', 'danger')
+            return redirect(url_for('login'))
+
+        finally:
+            connection.close()
 
 
 class CreateBetController(MethodView):
@@ -199,3 +243,71 @@ class ListEventsController(MethodView):
 
       
         return render_template('public/listar_eventos.html', events = events)  # Renderiza a página de listar eventos com os dados
+
+
+class WalletController(MethodView):
+    def get(self, user_id):
+        # Conexão com o banco de dados
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='db_cadastro'
+        )
+
+        try:
+            with connection.cursor() as cursor:
+                # Consulta para obter o valor da wallet e o nome do usuário
+                cursor.execute("SELECT wallet, username FROM users WHERE id = %s", (user_id,))
+                user_info = cursor.fetchone()
+
+                # Verifica se o usuário foi encontrado
+                if user_info:
+                    wallet_value = float(user_info[0])  # Converte o valor da wallet para float
+                    username = user_info[1]  # Nome do usuário
+                else:
+                    wallet_value = 0.0
+                    username = "Usuário não encontrado"
+
+            # Renderiza o template com as informações do usuário
+            return render_template('public/wallet.html', wallet=wallet_value, username=username)
+
+        except Exception as e:
+            flash(f'Ocorreu um erro ao acessar a wallet: {str(e)}', 'danger')
+            return redirect(url_for('home'))
+
+        finally:
+            connection.close()
+
+
+class DepositController(MethodView):
+    def get(self, user_id):
+        # Renderiza a página de depósito
+        return render_template('public/deposito.html', user_id=user_id)
+
+    def post(self, user_id):
+        # Lógica para adicionar saldo na wallet
+        deposit_amount = request.form.get('deposit_amount')
+
+        # Conexão com o banco de dados
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='db_cadastro'
+        )
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("UPDATE users SET wallet = wallet + %s WHERE id = %s", (deposit_amount, user_id))
+                connection.commit()
+                flash('Saldo depositado com sucesso!', 'success')
+                return redirect(url_for('wallet', user_id=user_id))
+
+        except Exception as e:
+            flash(f'Ocorreu um erro ao depositar: {str(e)}', 'danger')
+            return redirect(url_for('home'))
+
+        finally:
+            connection.close()
+

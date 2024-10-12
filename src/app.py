@@ -10,7 +10,9 @@ from src.controllers.controller import (
     LogoutController,
     CreateBetController,
     ListEventsController,
-    ListBetsController
+    ListBetsController,
+    WalletController,
+    DepositController
 )
 
 app = Flask(__name__)
@@ -28,6 +30,12 @@ app.add_url_rule('/logout', view_func=LogoutController.as_view('logout'))
 app.add_url_rule('/confirm_bet', view_func=CreateBetController.as_view('confirm_bet'))  # Supondo que você quer usar o mesmo controlador para confirmar a aposta
 app.add_url_rule('/listar_eventos', view_func=ListEventsController.as_view('listar_eventos'))
 app.add_url_rule('/listar_bets', view_func=ListBetsController.as_view('listar_bets'))  # Corrigido o nome da rota para refletir corretamente o controlador
+
+# Apenas uma definição de rota para a wallet
+app.add_url_rule('/wallet/<int:user_id>', view_func=WalletController.as_view('wallet'))  # Para ver a wallet
+# No seu app.py
+app.add_url_rule('/deposito/<int:user_id>', view_func=DepositController.as_view('deposito'))  # Rota para a página de depósito
+app.add_url_rule('/realizar_deposito/<int:user_id>', view_func=WalletController.as_view('realizar_deposito'), methods=['POST'])  # Rota para processar o depósito
 
 if __name__ == '__main__':
     app.run(debug=True)
