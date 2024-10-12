@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Eventos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+
+        <div class="button-container">
+            <a href="{{ url_for('home') }}">
+                <button type="button" class="back-button">Voltar para Home</button>
+            </a>
+        </div>
+
+        <h1 class="title">Eventos Cadastrados</h1>
+        
+
+        {% if events %}
+            <table class="event-table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descrição</th>
+                        <th>Valor da Cota</th>
+                        <th>Início das Apostas</th>
+                        <th>Fim das Apostas</th>
+                        <th>Data do Evento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in events %}
+                    <tr>
+                        <td>{{ evento[1] }}</td> <!-- Título do evento -->
+                        <td>{{ evento[2] }}</td> <!-- Descrição do evento -->
+                        <td>R$ {{ evento[3] }}</td> <!-- Valor da cota -->
+                        <td>{{ evento[4] }}</td> <!-- Início das apostas -->
+                        <td>{{ evento[5] }}</td> <!-- Fim das apostas -->
+                        <td>{{ evento[6] }}</td> <!-- Data do evento -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-events">Nenhum evento encontrado.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

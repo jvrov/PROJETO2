@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Depósito</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<form method="POST" action="{{ url_for('deposito', user_id=user_id) }}">
+    <label for="deposit_amount">Valor a Depositar:</label>
+    <input type="number" name="deposit_amount" required>
+    <button type="submit">Confirmar Depósito</button>
+</form>
+<div>
+    <a href="{{ url_for('home') }}">
+        <button type="button">Voltar para Home</button>
+    </a>
+</div>
+{% endblock %}

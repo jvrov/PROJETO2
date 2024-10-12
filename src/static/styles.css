@@ -75,56 +75,54 @@ button:hover {
   background-color: #313131; /* Cor de fundo ao passar o mouse */
 }
 
-.form-container {
-  max-width: 400px; /* Largura máxima do contêiner */
-  margin: 0 auto; /* Centraliza o contêiner horizontalmente */
-  padding: 20px; /* Adiciona espaçamento interno */
-  background: rgba(255, 255, 255, 0.1); /* Fundo semitransparente */
-  border-radius: 8px; /* Borda arredondada */
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Sombra ao redor do contêiner */
-  position: absolute; /* Permite o posicionamento absoluto dentro do body */
-  top: 100px; /* Distância do topo da tela */
-  left: 50%; /* Centraliza horizontalmente */
-  transform: translateX(-50%); /* Ajusta o contêiner para centralizar corretamente */
+/* Adiciona margem superior à tabela */
+.event-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 100px; /* Espaço entre o título e a tabela */
 }
 
-.form-container h2 {
-  margin-bottom: 20px; /* Espaçamento abaixo do título */
-  font-size: 24px; /* Tamanho da fonte do título */
-  color: #FFD700; /* Cor dourada para o título */
+.event-table th, .event-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
-.form-container label {
-  display: block; /* Faz com que os rótulos ocupem toda a largura disponível */
-  margin-bottom: 8px; /* Espaçamento abaixo dos rótulos */
-  font-weight: bold; /* Fonte em negrito */
+.event-table th {
+  background-color: #000;
+  color: yellow;
 }
 
-.form-container input {
-  width: 100%; /* Largura total dos campos de entrada */
-  padding: 10px; /* Espaçamento interno dos campos */
-  margin-bottom: 15px; /* Espaçamento abaixo dos campos */
-  border: 1px solid #ddd; /* Borda ao redor dos campos */
-  border-radius: 5px; /* Borda arredondada */
-  background-color: #222; /* Fundo escuro para os campos */
-  color: white; /* Cor do texto nos campos */
+.event-table td {
+  background-color: #333;
+  color: white;
 }
 
-.form-container button {
-  background-color: #28a745; /* Cor de fundo verde */
-  border: none; /* Remove a borda padrão */
-  color: white; /* Cor do texto */
-  padding: 12px 24px; /* Espaçamento interno */
-  text-align: center; /* Alinha o texto ao centro */
-  text-decoration: none; /* Remove qualquer decoração de texto */
-  display: inline-block; /* Exibe o botão como elemento em linha */
-  font-size: 16px; /* Tamanho da fonte */
-  margin-top: 10px; /* Margem acima do botão */
-  cursor: pointer; /* Muda o cursor para uma mãozinha ao passar por cima */
-  border-radius: 5px; /* Borda arredondada */
-  transition: background-color 0.3s; /* Transição suave para a cor de fundo */
+/* Mantém o botão no topo direito */
+.button-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
-.form-container button:hover {
-  background-color: #218838; /* Cor de fundo ao passar o mouse */
+.back-button {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.back-button:hover {
+  background-color: #218838;
+}
+
+/* Estilo para o título */
+.title {
+  font-size: 28px;
+  color: yellow;
+  text-shadow: 1px 1px 2px #000;
+  margin-bottom: 20px;
 }
