@@ -12,7 +12,10 @@ from src.controllers.controller import (
     ListEventsController,
     ListBetsController,
     WalletController,
-    DepositController
+    DepositController,
+    WithdrawController,
+    ParticipateController,
+    MeusEventosController
 )
 
 app = Flask(__name__)
@@ -32,10 +35,15 @@ app.add_url_rule('/listar_eventos', view_func=ListEventsController.as_view('list
 app.add_url_rule('/listar_bets', view_func=ListBetsController.as_view('listar_bets'))  # Corrigido o nome da rota para refletir corretamente o controlador
 
 # Apenas uma definição de rota para a wallet
-app.add_url_rule('/wallet/<int:user_id>', view_func=WalletController.as_view('wallet'))  # Para ver a wallet
 # No seu app.py
 app.add_url_rule('/deposito/<int:user_id>', view_func=DepositController.as_view('deposito'))  # Rota para a página de depósito
 app.add_url_rule('/realizar_deposito/<int:user_id>', view_func=WalletController.as_view('realizar_deposito'), methods=['POST'])  # Rota para processar o depósito
+app.add_url_rule('/sacar/<int:user_id>', view_func=WithdrawController.as_view('sacar'))
+app.add_url_rule('/participate/<int:event_id>', view_func=ParticipateController.as_view('participate_event'))
+app.add_url_rule('/meus_eventos', view_func=MeusEventosController.as_view('meus_eventos'))
+# Rota para a wallet
+app.add_url_rule('/wallet/<int:user_id>', view_func=WalletController.as_view('wallet'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

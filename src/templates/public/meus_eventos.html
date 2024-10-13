@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Eventos</title>
+    <title>Meus Eventos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
@@ -15,9 +15,9 @@
             </a>
         </div>
 
-        <h1 class="title">Eventos Cadastrados</h1>
+        <h1 class="title">Eventos em que Estou Participando</h1>
         
-        {% if events %}
+        {% if meus_eventos %}
             <table class="event-table">
                 <thead>
                     <tr>
@@ -27,11 +27,10 @@
                         <th>Início das Apostas</th>
                         <th>Fim das Apostas</th>
                         <th>Data do Evento</th>
-                        <th>Ações</th> <!-- Coluna para ações -->
                     </tr>
                 </thead>
                 <tbody>
-                    {% for evento in events %}
+                    {% for evento in meus_eventos %}
                     <tr>
                         <td>{{ evento[1] }}</td> <!-- Título do evento -->
                         <td>{{ evento[2] }}</td> <!-- Descrição do evento -->
@@ -39,17 +38,12 @@
                         <td>{{ evento[4] }}</td> <!-- Início das apostas -->
                         <td>{{ evento[5] }}</td> <!-- Fim das apostas -->
                         <td>{{ evento[6] }}</td> <!-- Data do evento -->
-                        <td>
-                            <form action="{{ url_for('participate_event', event_id=evento[0]) }}" method="POST">
-                                <button type="submit">Participar</button>
-                            </form>
-                        </td> <!-- Botão para participar -->
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         {% else %}
-            <p class="no-events">Nenhum evento encontrado.</p>
+            <p class="no-events">Você não está participando de nenhum evento.</p>
         {% endif %}
     </div>
 </body>

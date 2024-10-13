@@ -10,4 +10,21 @@
         <button type="button">Voltar para Home</button>
     </a>
 </div>
+
+{% if session.get('user_id') %}
+    <a href="{{ url_for('deposito', user_id=session['user_id']) }}">
+        <button type="button">Depositar</button>
+    </a>
+{% else %}
+    <p>Por favor, faça login para acessar sua wallet.</p>
+{% endif %}
+
+{% if session.get('user_id') %}
+    
+    <a href="{{ url_for('sacar', user_id=session['user_id']) }}">
+        <button type="button">Sacar</button>
+    </a>
+{% else %}
+    <p>Por favor, faça login para acessar sua wallet.</p>
+{% endif %}
 {% endblock %}

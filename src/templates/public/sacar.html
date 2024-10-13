@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Realizar Saque</h1>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Exibe o valor sacado caso exista -->
+    {% if withdraw_amount %}
+        <p>Valor do saque: R$ {{ withdraw_amount }}</p>
+    {% endif %}
+
+    <!-- Exibe o valor recebido após a taxa -->
+    {% if amount_received is not none %}
+        <p>Valor que você receberá: R$ {{ amount_received }}</p>
+    {% endif %}
+    
+    <form method="POST" action="{{ url_for('sacar', user_id=user_id) }}">
+        <label for="withdraw_amount">Valor do Saque:</label>
+        <input type="number" id="withdraw_amount" name="withdraw_amount" min="1" step="0.01" value="{{ withdraw_amount|default('') }}" required>
+
+        <button type="submit">Sacar</button>
+    </form>
+    <div>
+        <a href="{{ url_for('home') }}">
+            <button type="button">Voltar para Home</button>
+        </a>
+        <a href="{{ url_for('wallet', user_id=session['user_id']) }}">
+            <button type="button">Minha Wallet</button>
+        </a>
+    </div>
+    
+{% endblock %}
