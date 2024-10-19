@@ -6,37 +6,36 @@
 }
 
 body {
-  font-family: 'Arial', sans-serif; /* Fonte padrão para o corpo */
-  margin: 0; /* Remove a margem padrão do corpo */
-  padding: 20px; /* Adiciona espaçamento ao redor do corpo */
-  position: relative; /* Permite o posicionamento absoluto dos elementos */
-  height: 100vh; /* Altura total da tela */
-  background: linear-gradient(to right, #1a1a1a, #333); /* Gradiente de fundo */
-  color: white; /* Cor do texto padrão */
+  background-color: #0d1117;  /* Fundo escuro */
+  color: #ffffff;  /* Texto claro */
+  font-family: 'Roboto', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinhamento flexível para o topo */
+  height: 100vh;
+  padding-top: 50px; /* Adiciona espaçamento no topo da tela */
 }
-
 a {
   text-decoration: none; /* Remove o sublinhado dos links */
 }
 
 button {
-  background-color: #28a745; /* Cor de fundo verde */
-  border: none; /* Remove a borda padrão */
-  color: white; /* Cor do texto */
-  padding: 12px 24px; /* Espaçamento interno */
-  text-align: center; /* Alinha o texto ao centro */
-  text-decoration: none; /* Remove qualquer decoração de texto */
-  display: inline-block; /* Exibe os botões como elementos em linha */
-  font-size: 16px; /* Tamanho da fonte */
-  margin: 10px; /* Margem ao redor dos botões */
-  cursor: pointer; /* Muda o cursor para uma mãozinha ao passar por cima */
-  border-radius: 5px; /* Borda arredondada */
-  transition: background-color 0.3s, transform 0.3s; /* Transição suave para a cor de fundo */
+  background-color: #dc3545; /* Cor vermelha */
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1rem;
+  margin: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 200px;
 }
 
 button:hover {
-  background-color: #218838; /* Cor de fundo ao passar o mouse */
-  transform: scale(1.05); /* Leve aumento ao passar o mouse */
+  background-color: #c82333;
 }
 
 .button-container {
@@ -52,51 +51,71 @@ button:hover {
   margin: 20px 0; /* Margem: 20px acima, 0 abaixo */
   width: 100%; /* Garante que a linha ocupe a largura total da tela */
   position: absolute; /* Permite posicionamento absoluto */
-  top: 60px; /* Distância do topo da tela para a linha */
+  top: 80px; /* Distância do topo da tela para a linha */
   left: 0; /* Alinha a linha ao lado esquerdo da tela */
 }
 
 .title {
-  position: absolute; /* Permite o posicionamento absoluto dentro do body */
+  position: absolute; /* Mantém o posicionamento absoluto */
   top: 20px; /* Distância do topo da tela */
   left: 20px; /* Distância do lado esquerdo da tela */
   font-size: 28px; /* Tamanho da fonte */
-  font-weight: bold; /* Fonte em negrito */
-  color: #FFD700; /* Cor dourada para destaque */
-  background-color: #131313; /* Cor de fundo do título */
-  padding: 10px 20px; /* Espaçamento interno do título */
-  border-radius: 5px; /* Borda arredondada */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra ao redor do título */
-  display: inline-block; /* Exibe como botão em linha */
-  border: none; /* Remove a borda do link */
+  font-weight: 600; /* Peso da fonte mais suave, menos agressivo */
+  color: #f09e8c; /* Um tom de dourado suave (khaki) */
+  background-color: rgba(30, 30, 30, 0.9); /* Fundo semi-transparente para mesclar melhor */
+  padding: 10px 20px; /* Mantém o espaçamento interno */
+  border-radius: 10px; /* Borda mais arredondada para suavizar */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7); /* Sombra mais sutil e suave */
+  text-transform: uppercase; /* Coloca o texto todo em maiúsculas para impacto visual */
+  letter-spacing: 1px; /* Espaçamento entre letras para um efeito elegante */
+  border: 1px solid #f09e8c; /* Borda fina com o mesmo tom de dourado */
 }
 
 .title:hover {
   background-color: #313131; /* Cor de fundo ao passar o mouse */
 }
 
-/* Adiciona margem superior à tabela */
-.event-table {
-  width: 100%;
+/* Contêiner da tabela com margem superior para afastá-la do topo */
+.table-container {
+  margin-top: 50px; /* Aumentando a distância do topo */
+  display: flex;
+  justify-content: center; /* Centraliza a tabela horizontalmente */
+}
+
+
+/* Estilo da tabela */
+table {
+  width: 100%; /* Definindo uma largura específica, você pode ajustar conforme necessário */
   border-collapse: collapse;
-  margin-top: 100px; /* Espaço entre o título e a tabela */
-}
-
-.event-table th,
-.event-table td {
-  padding: 10px;
+  margin: 20px 0; /* Margem entre a tabela e outros elementos */
+  font-size: 1rem;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  background-color: #1c1f24; /* Fundo da tabela escuro */
+  color: #ffffff; /* Texto claro */
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.event-table th {
-  background-color: #000;
-  color: yellow;
+/* Estilo das células da tabela */
+th, td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #444;
 }
 
-.event-table td {
-  background-color: #333;
-  color: white;
+/* Estilo do cabeçalho da tabela */
+th {
+  background-color: #2e3239; /* Cabeçalho da tabela com contraste */
+  font-weight: bold;
+}
+
+/* Estilo para linhas alternadas da tabela */
+tr:nth-child(even) {
+  background-color: #23272b; /* Linhas alternadas mais escuras */
+}
+
+/* Efeito hover para linhas da tabela */
+tr:hover {
+  background-color: #3a3d42; /* Efeito hover para linhas */
 }
 
 /* Estilo para mensagens de flash */
@@ -121,7 +140,7 @@ button:hover {
 /* Estilos para categorias específicas */
 .success {
   background-color: #d4edda; /* Fundo verde claro */
-  color: #155724; /* Texto verde escuro */
+  color: #d64202; /* Texto verde escuro */
 }
 
 .danger {
@@ -136,7 +155,7 @@ button:hover {
 
 /* Estilo do botão de voltar */
 .back-button {
-  background-color: #28a745;
+  background-color: #a72828;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -146,63 +165,245 @@ button:hover {
 }
 
 .back-button:hover {
-  background-color: #218838;
+  background-color: #9c0000;
 }
 
 /* Estilo do painel de administração */
 .admin-panel {
-  padding: 20px;
-  background-color: #f8f9fa; /* Cor de fundo suave */
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 20px auto;
+  max-width: 1200px; /* Largura máxima do painel */
+  margin: 20px auto; /* Centraliza o painel na página */
+  padding: 20px; /* Espaçamento interno */
+  background-color: #000000; /* Cor de fundo clara */
+  border-radius: 10px; /* Bordas arredondadas */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
 .admin-title {
-  color: #000000; /* Cor do título */
-  font-size: 2em;
-  margin-bottom: 20px;
+  text-align: center; /* Centraliza o título */
+  font-size: 2.5em; /* Tamanho do título */
+  color: #979898; /* Cor do título */
 }
 
 .admin-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  display: flex; /* Flexbox para layout de cards */
+  justify-content: space-around; /* Espaçamento igual entre os cards */
+  flex-wrap: wrap; /* Permite que os cards se movam para a próxima linha em telas menores */
 }
 
 .action-card {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  background-color: #525252; /* Cor de fundo branca */
+  border-radius: 8px; /* Bordas arredondadas */
+  padding: 20px; /* Espaçamento interno do card */
+  width: 30%; /* Largura do card (ajuste conforme necessário) */
+  margin: 15px 0; /* Margem superior e inferior */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra suave do card */
+  transition: transform 0.2s; /* Transição suave ao passar o mouse */
 }
 
 .action-card h2 {
-  font-size: 1.3em;
-  margin: 10px 0;
+  font-size: 1.5em; /* Tamanho do subtítulo */
+  color: #282828; /* Cor do subtítulo */
+  margin-bottom: 10px; /* Espaçamento inferior */
 }
 
 .action-card p {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 1em; /* Tamanho da descrição */
+  color: #787878; /* Cor da descrição */
+}
+
+.action-card:hover {
+  transform: translateY(-5px); /* Eleva o card ao passar o mouse */
+}
+
+.container {
+  text-align: center;
+  padding: 20px;
+}
+
+/* Centralizando e estilizando a mensagem de boas-vindas */
+.welcome-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.welcome-message {
+  text-align: center; /* Centraliza a mensagem de boas-vindas */
+  font-size: 1.2em; /* Tamanho da mensagem */
+  margin-bottom: 30px; /* Espaçamento inferior */
+  color: #6c757d; /* Cor da mensagem */
+}
+
+h1 {
+  font-size: 4.5rem;
+  margin-bottom: 45px;
+}
+h2 {
+  font-size: 1.2em; /* Define o tamanho do h2 */
+  margin-bottom: 10px; /* Adiciona um espaço entre o h1 e o h2 */
+}
+
+p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.user-info {
+  font-size: 18px;
+  color: #FFF; /* Branco */
+  margin-bottom: 30px;
+}
+
+/* Estilo do contêiner de botões */
+.button-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* Permite que os botões se ajustem ao tamanho da tela */
+  gap: 15px; /* Espaçamento entre os botões */
+  margin-top: 20px;
 }
 
 .btn-action {
-  display: inline-block;
-  padding: 10px 15px;
-  margin-top: 10px;
-  color: #fff;
-  background-color: #007bff; /* Cor azul */
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+  text-transform: uppercase;
 }
 
 .btn-action:hover {
-  background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
-.welcome-message {
-  color: #000000; /* Cor dourada */
+
+/* Estilo para as mensagens de feedback (flashes) */
+.flashes {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  list-style: none;
+}
+
+.flashes li {
+  background-color: rgba(254, 47, 47, 0.8);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  color: #ffffff;
+}
+@media (max-width: 768px) {
+  h1 {
+      font-size: 2rem;
+  }
+  button {
+      width: 100%;
+      margin: 10px 0;
+  }
+} 
+
+
+/* Estilização do body */
+.index-page {
+  font-family: Arial, sans-serif;
+  color: #fff; /* Cor do texto em branco para contraste */
+  background-color: #000; /* Fundo preto */
+  padding: 20px; /* Espaçamento interno */
+  text-align: justify; /* Justifica o texto */
+  margin-top: 40px; /* Margem superior para afastar do topo */
+}
+
+/* Estilização do título */
+.index-page .title {
+  text-align: center; /* Centraliza o título */
+  font-size: 36px; /* Tamanho do texto */
+  margin-bottom: 20px; /* Espaçamento inferior */
+  color: #f09e8c; /* Cor do título vermelha */
+}
+
+/* Estilização do container de botões */
+.index-page .button-container {
+  text-align: center; /* Centraliza os botões */
+  margin-bottom: 20px; /* Espaçamento inferior */
+}
+
+.index-page .button-container button {
+  background-color: #dc3545; /* Cor de fundo dos botões vermelha */
+  color: white; /* Cor do texto */
+  border: none; /* Remove borda */
+  padding: 10px 20px; /* Preenchimento do botão */
+  border-radius: 5px; /* Bordas arredondadas */
+  cursor: pointer; /* Muda o cursor ao passar o mouse */
+  transition: background-color 0.3s; /* Transição de cor */
+}
+
+.index-page .button-container button:hover {
+  background-color: #c82333; /* Cor do botão ao passar o mouse (vermelho escuro) */
+}
+
+/* Linha horizontal */
+.index-page .horizontal-line {
+  border: none; /* Remove borda padrão */
+  border-top: 2px solid #ff0000; /* Borda superior vermelha */
+  margin: 20px 0; /* Espaçamento vertical */
+}
+
+/* Estilização da seção "Como Funciona" */
+.index-page .how-it-works {
+  background: #222; /* Fundo cinza escuro */
+  border-radius: 8px; /* Bordas arredondadas */
+  padding: 20px; /* Preenchimento */
+  margin-bottom: 20px; /* Espaçamento inferior */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Sombra leve */
+}
+
+/* Estilização das seções de título */
+.index-page .how-it-works h2 {
+  font-size: 28px; /* Tamanho do título */
+  margin-bottom: 10px; /* Espaçamento inferior */
+  color: #f09e8c; /* Cor do título vermelha */
+}
+
+.index-page .how-it-works h3 {
+  font-size: 20px; /* Tamanho do subtítulo */
+  margin: 10px 0; /* Espaçamento vertical */
+  color: #fff; /* Cor do subtítulo em branco */
+}
+
+/* Estilização da seção de notícias */
+.index-page .news {
+  background: #222; /* Fundo cinza escuro */
+  border-radius: 8px; /* Bordas arredondadas */
+  padding: 20px; /* Preenchimento */
+  margin-bottom: 20px; /* Espaçamento inferior */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Sombra leve */
+}
+
+/* Estilização do título das notícias */
+.index-page .news h2 {
+  font-size: 28px; /* Tamanho do título */
+  margin-bottom: 10px; /* Espaçamento inferior */
+  color: #f09e8c; /* Cor do título vermelha */
+}
+
+/* Estilização das mensagens */
+.index-page .flashes {
+  margin-top: 20px; /* Espaçamento superior */
+}
+
+.index-page .flashes li {
+  margin: 5px 0; /* Espaçamento vertical entre mensagens */
+  padding: 10px; /* Preenchimento das mensagens */
+  border-radius: 5px; /* Bordas arredondadas */
+}
+
+.index-page .success {
+  background-color: #ffcccc; /* Fundo vermelho claro para sucesso */
+  color: #721c24; /* Texto vermelho escuro */
+}
+
+.index-page .error {
+  background-color: #ff9999; /* Fundo vermelho suave para erro */
+  color: #721c24; /* Texto vermelho escuro */
 }

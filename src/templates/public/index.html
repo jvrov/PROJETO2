@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
+
+{% block content %}
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,30 +9,46 @@
 </head>
 <body>
   
-  <div class="title">ApostaVIP</div>
+  <div class="index-page">  <!-- Classe atualizada -->
+    <div class="title">Aposta VIP</div>
 
-  <div class="button-container">
-    <a href="{{ url_for('register') }}">
-      <button type="button">Criar conta</button>
-    </a>
+    <div class="button-container">
+      <a href="{{ url_for('register') }}">
+        <button type="button">Criar conta</button>
+      </a>
 
-    <a href="{{ url_for('login') }}">
-      <button type="button">Login</button>
-    </a>
-    
+      <a href="{{ url_for('login') }}">
+        <button type="button">Login</button>
+      </a>
+    </div>
 
-  </div>
+    <hr class="horizontal-line">
+    <div class="how-it-works">
+      <h2>Como Funciona o ApostaVIP</h2>
+      <p>Bem-vindo ao ApostaVIP, a sua plataforma de apostas online! Aqui, você pode participar de diversos eventos e jogos emocionantes.</p>
+      
+      <h3>Eventos</h3>
+      <p>Participe de eventos ao vivo onde você pode fazer apostas em resultados de competições esportivas e muito mais. Escolha seu evento, faça sua aposta e aguarde os resultados!</p>
 
-  <hr class="horizontal-line">
+      <h3>Jogo do Dado</h3>
+      <p>No jogo do dado, você aposta em qual número o dado irá cair. Escolha um número de 1 a 6 e veja se sua previsão se concretiza! Quanto mais apostadores, maior a emoção!</p>
 
-  <ul class="flashes">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <li class="{{ message.category }}">{{ message }}</li>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </ul>
+      <h3>Escolha a Cor</h3>
+      <p>No nosso jogo de escolha de cor, você deve adivinhar se a próxima cor será. Faça sua aposta e veja se você acertou na próxima rodada!</p>
+    </div>
+    <div class="news">
+      <h2>Notícias</h2>
+      <p>Novos eventos de apostas disponíveis esta semana!</p>
+    </div>
+    <ul class="flashes">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <li class="{{ message.category }}">{{ message }}</li>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </ul>
+  </div> <!-- Fecha a nova div -->
 </body>
-</html>
+{% endblock %}

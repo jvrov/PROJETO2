@@ -62,6 +62,7 @@ class RegisterController(MethodView):
         finally:
             connection.close()
 
+            
 class LoginController(MethodView):
     def get(self):
         print("GET request recebido na rota /login")
@@ -106,10 +107,13 @@ class LoginController(MethodView):
             connection.close()
 
         # Verificação do login
+        # Verificação do login
         if user:
             print("Usuário encontrado no banco de dados.")
             session['user_id'] = user[0]  # Guarda o ID do usuário na sessão
+            session['username'] = user[1]  # Guarda o nome do usuário na sessão
             print(f"ID do usuário salvo na sessão: {user[0]}")
+            print(f"Nome do usuário salvo na sessão: {user[1]}")  # Debug
 
             is_admin = user[-1]  # Assumindo que 'is_admin' é a última coluna
             print(f"Valor de is_admin: {is_admin}")
@@ -129,7 +133,6 @@ class LoginController(MethodView):
             print("Usuário não encontrado no banco de dados. Login falhou.")
             flash('Email ou senha incorretos.', 'danger')
             return redirect(url_for('login'))
-        
 
 
 class AdminDashboardController(MethodView):

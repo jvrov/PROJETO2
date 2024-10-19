@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+{% extends "base.html" %}
+
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,7 +48,7 @@
         {% endif %}
     </div>
     <div class="button-container">
-        <a href="{{ url_for('admin_dashboard') }}"><button>Voltar para tela de gerenciamento</button></a>
+        <a href="{{ url_for('admin_dashboard') }}"><button>Painel</button></a>
     </div>
     <ul class="flashes">
         {% with messages = get_flashed_messages() %}
@@ -59,4 +60,4 @@
         {% endwith %}
     </ul>
 </body>
-</html>
+{% endblock %}

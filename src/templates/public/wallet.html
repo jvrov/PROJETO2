@@ -2,7 +2,6 @@
 
 {% block content %}
 <h1>Minha Wallet</h1>
-<p>User: {{username}}</p>
 <p>Valor disponível: R$ {{ wallet|float }}</p>
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 <div>
