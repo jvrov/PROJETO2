@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+<div class="admin-panel">
+    <h1 class="admin-title">Painel de Administração</h1>
+    <h2 class="welcome-message">Bem-vindo ao sistema de gerenciamento. Você pode realizar as seguintes ações:</h2>
+
+    <div class="admin-actions">
+        <div class="action-card">
+            <h2>Gerenciar Eventos</h2>
+            <p>Visualize e exclua eventos.</p>
+            <a href="{{ url_for('eventosagora') }}"><button>Eventos Agora</button></a>
+        </div>
+
+        <div class="action-card">
+            <h2>Gerenciar Usuários</h2>
+            <p>Visualize os usuários registrados.</p>
+            <a href="{{ url_for('listar_usuarios') }}" ><button>Listar Usuários</button></a> <!-- Atualizado aqui -->
+        </div>        
+
+
+        
+
+        <div class="action-card">
+            <h2>Logout</h2>
+            <p>Desconecte-se do painel de administração.</p>
+            <a href="{{ url_for('logout') }}" ><button>Sair</button></a>
+        </div>
+    </div>
+</div>
+<ul class="flashes">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <li class="{{ message.category }}">{{ message }}</li>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </ul>
+{% endblock %}

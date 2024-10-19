@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Eventos</title>
+    <title>Eventos Agora</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
 
-        <div class="button-container">
-            <a href="{{ url_for('home') }}">
-                <button type="button" class="back-button">Voltar para Home</button>
-            </a>
-        </div>
-
-        <h1 class="title">Eventos em que Estou Participando</h1>
+        <h1 class="title">Eventos Cadastrados</h1>
         
-        {% if meus_eventos %}
+        {% if events %}
             <table class="event-table">
                 <thead>
                     <tr>
@@ -27,10 +21,11 @@
                         <th>Início das Apostas</th>
                         <th>Fim das Apostas</th>
                         <th>Data do Evento</th>
+                        <th>Ações</th> <!-- Coluna para ações -->
                     </tr>
                 </thead>
                 <tbody>
-                    {% for evento in meus_eventos %}
+                    {% for evento in events %}
                     <tr>
                         <td>{{ evento[1] }}</td> <!-- Título do evento -->
                         <td>{{ evento[2] }}</td> <!-- Descrição do evento -->
@@ -38,13 +33,21 @@
                         <td>{{ evento[4] }}</td> <!-- Início das apostas -->
                         <td>{{ evento[5] }}</td> <!-- Fim das apostas -->
                         <td>{{ evento[6] }}</td> <!-- Data do evento -->
+                        <td>
+                            <form action="{{ url_for('delete_event', event_id=evento[0]) }}" method="POST" style="display:inline;">
+                                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este evento?');">Excluir</button>
+                            </form>
+                        </td> <!-- Botão para excluir -->
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         {% else %}
-            <p class="no-events">Você não está participando de nenhum evento.</p>
+            <p class="no-events">Nenhum evento encontrado.</p>
         {% endif %}
+    </div>
+    <div class="button-container">
+        <a href="{{ url_for('admin_dashboard') }}"><button>Voltar para tela de gerenciamento</button></a>
     </div>
     <ul class="flashes">
         {% with messages = get_flashed_messages() %}
@@ -54,6 +57,6 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-      </ul>
+    </ul>
 </body>
 </html>

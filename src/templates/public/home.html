@@ -5,14 +5,12 @@
 <p>Você está logado e pode explorar as funcionalidades do site.</p>
 
 <a href="{{ url_for('create_bet') }}">
-    <button type="button">Criar Aposta</button>
+    <button type="button">Criar evento</button>
 </a>
 
 <a href="{{ url_for('listar_eventos') }}">
     <button type="button">Listar Eventos</button>
 </a>
-
-
 
 {% if session.get('user_id') %}
     <a href="{{ url_for('wallet', user_id=session['user_id']) }}">
@@ -22,17 +20,35 @@
     <p>Por favor, faça login para acessar sua wallet.</p>
 {% endif %}
 
-
-
-
-
 <a href="{{ url_for('meus_eventos') }}">
     <button type="button">Meus Eventos</button>
 </a>
+
+<!-- Novo botão para o jogo de dados -->
+<a href="{{ url_for('jogo') }}">
+    <button type="button">Apostar no Jogo de Dados</button>
+</a>
+
+
+<a href="{{ url_for('jogo_cor') }}">
+    <button type="button">jogo da cor</button>
+</a>
+
 
 <a href="{{ url_for('logout') }}">
     <button type="button">Logout</button>
 </a>
 
+
+
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<ul class="flashes">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <li class="{{ message.category }}">{{ message }}</li>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </ul>
 {% endblock %}

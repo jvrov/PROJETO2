@@ -28,5 +28,15 @@
             <button type="button">Minha Wallet</button>
         </a>
     </div>
+
+    <ul class="flashes">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <li class="{{ message.category }}">{{ message }}</li>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </ul>
     
 {% endblock %}

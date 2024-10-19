@@ -23,5 +23,13 @@
 <a href="{{ url_for('ola_controller') }}">
     <button type="button">Voltar para a Tela Inicial</button>
 </a>
-
+<ul class="flashes">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <li class="{{ message.category }}">{{ message }}</li>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </ul>
 {% endblock %}

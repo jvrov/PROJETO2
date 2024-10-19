@@ -1,0 +1,29 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    birthdate DATE NOT NULL,
+    wallet DECIMAL(10, 2) DEFAULT 0.00
+);
+
+CREATE TABLE events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(50) NOT NULL,
+    descricao VARCHAR(150),
+    valor_cota DECIMAL(10, 2) NOT NULL CHECK (valor_cota >= 1),
+    inicio_apostas DATETIME NOT NULL,
+    fim_apostas DATETIME NOT NULL,  -- Adicionando a coluna fim_apostas para o período de apostas
+    data_evento DATE NOT NULL,
+    num_apostas INT DEFAULT 0,      -- Coluna para armazenar o número de apostas
+    valor_total DECIMAL(15, 2) DEFAULT 0.00  -- Valor acumulado das apostas
+);
+
+CREATE TABLE participacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,  -- ID do usuário que participou do evento
+    event_id INT,  -- ID do evento
+    data_participacao DATETIME,  -- Data de participação
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (event_id) REFERENCES events(id)
+);

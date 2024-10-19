@@ -18,9 +18,20 @@
     <a href="{{ url_for('login') }}">
       <button type="button">Login</button>
     </a>
+    
+
   </div>
 
   <hr class="horizontal-line">
-  
+
+  <ul class="flashes">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <li class="{{ message.category }}">{{ message }}</li>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </ul>
 </body>
 </html>

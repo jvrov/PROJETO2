@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Jogo do Dado</h1>
+    <form method="post">
+        <label for="numero_apostado">Número apostado (1 a 6):</label>
+        <input type="number" id="numero_apostado" name="numero_apostado" min="1" max="6" required>
+        <br>
+        <label for="valor_apostado">Valor apostado:</label>
+        <input type="number" id="valor_apostado" name="valor_apostado" step="0.01" required>
+        <br>
+        
+        <!-- Contêiner para os botões -->
+        <div class="botao-container">
+            <button type="submit" class="btn-apostar">Apostar</button>
+            <a href="{{ url_for('home') }}">
+                <button type="button" class="btn-voltar">Voltar para Home</button>
+            </a>
+        </div>
+    </form>
+    
+    {% if numero_sortiado %}
+        <h2>Número sorteado: {{ numero_sortiado }}</h2>
+        <img src="{{ url_for('static', filename='images/dado_' ~ numero_sortiado ~ '.png') }}" alt="Dado sorteado" class="dado-imagem">
+        
+        {% if mensagem_resultado %}
+            <p>{{ mensagem_resultado }}</p>
+        {% endif %}
+        <a href="{{ url_for('jogo') }}">
+            <button type="button" class="btn-voltar">Jogar novamente</button>
+        </a>
+    {% endif %}
+    
+{% endblock %}

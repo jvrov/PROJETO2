@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuários</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Usuários Registrados</h1>
+        
+        {% if usuarios %}
+            <table class="event-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome de Usuário</th>
+                        <th>Email</th>
+                        <th>Data de Nascimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario[0] }}</td>  <!-- ID -->
+                        <td>{{ usuario[1] }}</td>  <!-- Nome de Usuário -->
+                        <td>{{ usuario[2] }}</td>  <!-- Email -->
+                        <td>{{ usuario[3] }}</td>  <!-- Data de Nascimento -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-users">Nenhum usuário encontrado.</p>
+        {% endif %}
+
+        <!-- Botão para voltar ao dashboard -->
+        <div class="button-container">
+            <a href="{{ url_for('admin_dashboard') }}"><button>Voltar para tela de gerenciamento</button></a>
+        </div>
+        
+    <ul class="flashes">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <li class="{{ message.category }}">{{ message }}</li>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </ul>
+</body>
+</html>
