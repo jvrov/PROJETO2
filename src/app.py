@@ -21,7 +21,8 @@ from src.controllers.controller import (
     AdminDashboardController,
     EventosAgoraController,
     DeleteEventController,
-    ListarUsuariosController
+    ListarUsuariosController,
+    UserProfileController
 )
 
 app = Flask(__name__)
@@ -51,6 +52,8 @@ app.add_url_rule('/admin_dashboard', view_func=AdminDashboardController.as_view(
 app.add_url_rule('/eventosagora', view_func=EventosAgoraController.as_view('eventosagora'))
 app.add_url_rule('/delete_event/<int:event_id>', view_func=DeleteEventController.as_view('delete_event'))
 app.add_url_rule('/listar_usuarios', view_func=ListarUsuariosController.as_view('listar_usuarios'))
+app.add_url_rule('/profile', view_func=UserProfileController.as_view('user_profile'))
+
 
 
 

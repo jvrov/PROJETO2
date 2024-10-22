@@ -26,8 +26,13 @@
         <a href="{{ url_for('wallet', user_id=session['user_id']) }}" class="btn">
             <button type="button" class="action-btn">Minha Wallet</button>
         </a>
+        
+        <!-- Botão para o perfil do usuário -->
+        <a href="{{ url_for('user_profile') }}" class="btn">
+            <button type="button" class="action-btn">Meu Perfil</button>
+        </a>
         {% else %}
-        <p class="info-text">Por favor, faça login para acessar sua wallet.</p>
+        <p class="info-text">Por favor, faça login para acessar sua wallet e perfil.</p>
         {% endif %}
 
         <a href="{{ url_for('meus_eventos') }}" class="btn">

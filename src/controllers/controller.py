@@ -786,15 +786,23 @@ class JogoCorController(MethodView):
                 if numero_sorteado == 0:
                     cor_sorteada = 'verde'
                     valor_final = valor_apostado * 14
-                    mensagem_resultado = f'Você apostou no verde (0). A cor sorteada foi {cor_sorteada}. Você ganhou R${valor_final:.2f}!'
+                    mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você ganhou R${valor_final:.2f}!'
                 elif numero_sorteado % 2 == 0:
                     cor_sorteada = 'preto'
-                    valor_final = valor_apostado * 2
-                    mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você ganhou R${valor_final:.2f}!'
+                    if cor_apostada == cor_sorteada:
+                        valor_final = valor_apostado * 2
+                        mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você ganhou R${valor_final:.2f}!'
+                    else:
+                        valor_final = 0
+                        mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você perdeu R${valor_apostado:.2f}.'
                 else:
                     cor_sorteada = 'vermelho'
-                    valor_final = 0  # Perda total se não ganhar
-                    mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você perdeu R${valor_apostado:.2f}.'
+                    if cor_apostada == cor_sorteada:
+                        valor_final = valor_apostado * 2
+                        mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você ganhou R${valor_final:.2f}!'
+                    else:
+                        valor_final = 0
+                        mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você perdeu R${valor_apostado:.2f}.'
 
                 # Obter o saldo atual do usuário
                 cursor.execute("SELECT wallet FROM users WHERE id = %s", (user_id,))
@@ -839,6 +847,7 @@ class JogoCorController(MethodView):
         finally:
             connection.close()
 
+
 class ListarUsuariosController(MethodView):
     def get(self):
         connection = pymysql.connect(
@@ -855,4 +864,46 @@ class ListarUsuariosController(MethodView):
         finally:
             connection.close()
 
-        return render_template('public/listar_usuarios.html', usuarios=usuarios)
+        return render_template('public/listar_usuarios.html', usuarios=usuarios) 
+    
+
+class UserProfileController(MethodView):
+    def get(self):
+        user_id = session.get('user_id')  # Obtém o ID do usuário logado
+        print(f"ID do usuário obtido da sessão: {user_id}")
+
+        if user_id is None:
+            flash('Você precisa estar logado para acessar o perfil.', 'danger')
+            return redirect(url_for('login'))
+
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='db_cadastro'
+        )
+        print("Conexão com o banco de dados estabelecida.")
+
+        try:
+            with connection.cursor() as cursor:
+                # Buscar informações do usuário
+                print(f"Buscando informações do usuário com ID: {user_id}")
+                cursor.execute("SELECT username, email, birthdate, wallet FROM users WHERE id = %s", (user_id,))
+                user_info = cursor.fetchone()
+                print(f"Informações do usuário: {user_info}")
+
+                if not user_info:
+                    flash('Usuário não encontrado.', 'danger')
+                    return redirect(url_for('home'))
+
+            print("Renderizando o template profile.html")
+            return render_template('public/profile.html', user_info=user_info)
+
+        except Exception as e:
+            print(f"Erro ao carregar o perfil: {str(e)}")
+            flash(f'Ocorreu um erro ao carregar o perfil: {str(e)}', 'danger')
+            return redirect(url_for('home'))
+
+        finally:
+            connection.close()
+            print("Conexão com o banco de dados fechada.")
