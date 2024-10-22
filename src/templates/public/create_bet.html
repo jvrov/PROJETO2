@@ -1,46 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Criar Novo Evento</h1>
+<div class="create-event-container">
+    <h1 class="create-event-title">Criar evento</h1>
+    <form action="{{ url_for('create_bet') }}" method="POST" class="event-form">
+        <div class="form-group">
+            <label for="title">Titulo do evento:</label>
+            <input type="text" id="title" name="title" class="form-control" maxlength="50" placeholder="Event title" required>
+        </div>
 
-<form action="{{ url_for('create_bet') }}" method="POST">
-    <div class="form-group">
-        <label for="title">Título do Evento:</label>
-        <input type="text" id="title" name="title" maxlength="50" required>
+        <div class="form-group">
+            <label for="description">Descrição (150 digitos):</label>
+            <textarea id="description" name="description" class="form-control" maxlength="150" placeholder="Event description" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="bet_value">Valor da aposta (minimo de 1.00):</label>
+            <input type="number" id="bet_value" name="bet_value" class="form-control" step="0.01" min="1" required>
+        </div>
+
+        <div class="form-group datetime-group">
+            <label for="start_time">Data de inicio:</label>
+            <input type="datetime-local" id="start_time" name="start_time" class="form-control" required>
+        </div>
+
+        <div class="form-group datetime-group">
+            <label for="end_time">Data de termino:</label>
+            <input type="datetime-local" id="end_time" name="end_time" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="event_date">Data do evento:</label>
+            <input type="date" id="event_date" name="event_date" class="form-control" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Criar evento</button>
+    </form>
+
+    <div class="button-container">
+        <a href="{{ url_for('home') }}">
+            <button type="button" class="back-btn">Voltar para tela inicial</button>
+        </a>
     </div>
-
-    <div class="form-group">
-        <label for="description">Descrição Curta (150 caracteres):</label>
-        <textarea id="description" name="description" maxlength="150" required></textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="bet_value">Valor de cada cota (mínimo de R$ 1,00):</label>
-        <input type="number" id="bet_value" name="bet_value" step="0.01" min="1" required>
-    </div>
-
-    <div class="form-group">
-        <label for="start_time">Data e Hora de Início das Apostas:</label>
-        <input type="datetime-local" id="start_time" name="start_time" required>
-    </div>
-
-    <div class="form-group">
-        <label for="end_time">Data e Hora de Fim das Apostas:</label>
-        <input type="datetime-local" id="end_time" name="end_time" required>
-    </div>
-
-    <div class="form-group">
-        <label for="event_date">Data do Evento (Dia, Mês, Ano):</label>
-        <input type="date" id="event_date" name="event_date" required>
-    </div>
-
-    <button type="submit">Criar Evento</button>
-</form>
-
-<div class="button-container">
-    <a href="{{ url_for('home') }}">
-        <button type="button">Voltar para Home</button>
-    </a>
 </div>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
@@ -54,5 +55,5 @@
       {% endif %}
     {% endwith %}
   </ul>
-  
+
 {% endblock %}

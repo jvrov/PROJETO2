@@ -71,13 +71,11 @@ class LoginController(MethodView):
     def post(self):
         print("POST request recebido na rota /login")
 
-        # Pegar os dados do formulário
         email = request.form['email']
         password = request.form['password']
         print(f"Email recebido: {email}")
         print(f"Senha recebida: {password}")
 
-        # Conexão com o banco de dados
         try:
             connection = pymysql.connect(
                 host='localhost',
@@ -106,29 +104,27 @@ class LoginController(MethodView):
         finally:
             connection.close()
 
-        # Verificação do login
-        # Verificação do login
         if user:
             print("Usuário encontrado no banco de dados.")
-            session['user_id'] = user[0]  # Guarda o ID do usuário na sessão
-            session['username'] = user[1]  # Guarda o nome do usuário na sessão
+            session['user_id'] = user[0]  
+            session['username'] = user[1] 
             print(f"ID do usuário salvo na sessão: {user[0]}")
-            print(f"Nome do usuário salvo na sessão: {user[1]}")  # Debug
+            print(f"Nome do usuário salvo na sessão: {user[1]}") 
 
-            is_admin = user[-1]  # Assumindo que 'is_admin' é a última coluna
+            is_admin = user[-1]  
             print(f"Valor de is_admin: {is_admin}")
 
-            # Verifica se o usuário é administrador
             if is_admin == 1:
                 session['is_admin'] = True
                 print("Usuário é administrador. Redirecionando para admin_dashboard...")
                 flash('Bem-vindo, administrador!', 'success')
-                return redirect(url_for('admin_dashboard'))  # Redireciona para o dashboard de admin
+                return redirect(url_for('admin_dashboard'))  
+            
             else:
                 session['is_admin'] = False
                 print("Usuário não é administrador. Redirecionando para confirmationlogin...")
                 flash('Login bem-sucedido!', 'success')
-                return redirect(url_for('confirmationlogin'))  # Redireciona para a página de usuário comum
+                return redirect(url_for('confirmationlogin'))  
         else:
             print("Usuário não encontrado no banco de dados. Login falhou.")
             flash('Email ou senha incorretos.', 'danger')
@@ -137,12 +133,10 @@ class LoginController(MethodView):
 
 class AdminDashboardController(MethodView):
     def get(self):
-        # Verifica se o usuário está logado e se é um administrador
         if 'user_id' not in session:
             flash('Você precisa estar logado para acessar essa página.', 'danger')
             return redirect(url_for('login'))
 
-        # Verifica se o usuário é um administrador (assumindo que 'is_admin' esteja na sessão ou no banco de dados)
         if session.get('is_admin') == True:
             return render_template('public/dashboard.html')  # Renderiza a página do dashboard de admin
         else:
@@ -162,16 +156,16 @@ class EventosAgoraController(MethodView):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("SELECT * FROM events")
-                events = cursor.fetchall()  # Recupera todos os eventos
+                events = cursor.fetchall()  
 
             if not events:
-                flash('Nenhum evento encontrado.', 'info')  # Mensagem se não houver eventos
+                flash('Nenhum evento encontrado.', 'info')  
             
         except Exception as e:
-            flash(f'Ocorreu um erro ao buscar eventos: {str(e)}', 'danger')  # Mensagem de erro
-            return redirect(url_for('home'))  # Redireciona para a página inicial
+            flash(f'Ocorreu um erro ao buscar eventos: {str(e)}', 'danger')  
+            return redirect(url_for('home'))  
         finally:
-            connection.close()  # Fecha a conexão com o banco de dados
+            connection.close()  
 
         return render_template('public/eventosagora.html', events=events)
 
@@ -186,20 +180,19 @@ class DeleteEventController(MethodView):
 
         try:
             with connection.cursor() as cursor:
-                # Primeiro, exclua as participações associadas ao evento
                 cursor.execute("DELETE FROM participacoes WHERE event_id = %s", (event_id,))
                 
-                # Depois, exclua o evento
+               
                 cursor.execute("DELETE FROM events WHERE id = %s", (event_id,))
-                connection.commit()  # Salva as alterações no banco de dados
+                connection.commit()  # altera o db
 
             flash('Evento excluído com sucesso!', 'success')
         except Exception as e:
             flash(f'Ocorreu um erro ao excluir o evento: {str(e)}', 'danger')
         finally:
-            connection.close()  # Fecha a conexão com o banco de dados
+            connection.close()  # fecha a conexão com o db
 
-        return redirect(url_for('eventosagora'))  # Redireciona para a lista de eventos
+        return redirect(url_for('eventosagora')) 
 
 class ConfirmationController(MethodView):
     def get(self):
@@ -301,7 +294,7 @@ class CreateBetController(MethodView):
                     VALUES (%s, %s, %s, %s, %s, %s)
                 """, (title, description, bet_value, start_time, end_time, event_date))
 
-                connection.commit()  # Confirma a transação
+                connection.commit()  # confirma a transação
 
                 flash('Evento criado com sucesso!', 'success')
                 return redirect(url_for('home'))
@@ -350,19 +343,18 @@ class ListEventsController(MethodView):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("SELECT * FROM events")
-                events = cursor.fetchall()  # Recupera todos os eventos
+                events = cursor.fetchall()  
 
             if not events:
-                flash('Nenhum evento encontrado.', 'info')  # Mensagem se não houver eventos
+                flash('Nenhum evento encontrado.', 'info') 
             
             
         except Exception as e:
-            flash(f'Ocorreu um erro ao buscar eventos: {str(e)}', 'danger')  # Mensagem de erro
+            flash(f'Ocorreu um erro ao buscar eventos: {str(e)}', 'danger')  
             
-            return redirect(url_for('home'))  # Redireciona para a página inicial
-
+            return redirect(url_for('home'))  
         finally:
-            connection.close()  # Fecha a conexão com o banco de dados
+            connection.close()  
 
       
         return render_template('public/listar_eventos.html', events = events)  
@@ -370,7 +362,6 @@ class ListEventsController(MethodView):
 
 class WalletController(MethodView):
     def get(self, user_id):
-        # Conexão com o banco de dados
         connection = pymysql.connect(
             host='localhost',
             user='root',
@@ -384,8 +375,8 @@ class WalletController(MethodView):
                 user_info = cursor.fetchone()
 
                 if user_info:
-                    wallet_value = float(user_info[0])  # Converte o valor da wallet para float
-                    username = user_info[1]  # Nome do usuário
+                    wallet_value = float(user_info[0])  
+                    username = user_info[1]  
                 else:
                     wallet_value = 0.0
                     username = "Usuário não encontrado"
@@ -407,7 +398,6 @@ class DepositController(MethodView):
     def post(self, user_id):
         deposit_amount = request.form.get('deposit_amount')
 
-        # Conexão com o banco de dados
         connection = pymysql.connect(
             host='localhost',
             user='root',
@@ -587,7 +577,7 @@ class MeusEventosController(MethodView):
                 WHERE p.user_id = %s
             """
             cursor.execute(query, (user_id,))
-            meus_eventos = cursor.fetchall()  # Recupera todos os eventos
+            meus_eventos = cursor.fetchall()  # recupera todos os eventos
             cursor.close()
             connection.close()  
             
@@ -628,7 +618,7 @@ class ParticipateController(MethodView):
                     event = cursor.fetchone()
 
                     if event:
-                        valor_cota = event[0]  # Corrigido para usar índice 0
+                        valor_cota = event[0]  
                         print(f"Valor da cota: {valor_cota}")
 
                         # ve o saldo da wallet do usuário
@@ -637,7 +627,7 @@ class ParticipateController(MethodView):
                         print(f"Wallet do usuário: {user_wallet}")
 
                         if user_wallet:
-                            if user_wallet[0] >= valor_cota:  # acesso correto ao saldo da wallet
+                            if user_wallet[0] >= valor_cota:  
                                 
                                 novo_saldo = user_wallet[0] - valor_cota
                                 cursor.execute("UPDATE users SET wallet = %s WHERE id = %s", (novo_saldo, user_id))
@@ -673,7 +663,6 @@ class ParticipateController(MethodView):
                 participantes = cursor.fetchall()
                 
                 if participantes:
-                    # pega um dos jogadores aleatoriamente
                     ganhador = random.choice(participantes)
                     flash(f'O ganhador do evento {event_id} é o usuário {ganhador["user_id"]}!', 'success')
                 else:
@@ -686,13 +675,11 @@ class JogoController(MethodView):
         return render_template('public/jogo.html')
 
     def post(self):
-        # Obtendo o user_id da sessão
         user_id = session.get('user_id')
         
-        # Verifica se o usuário está logado
         if user_id is None:
             flash('Você precisa estar logado para apostar.', 'danger')
-            return redirect(url_for('login'))  # Redirecione para a página de login
+            return redirect(url_for('login'))  
 
         numero_apostado = int(request.form['numero_apostado'])
         valor_apostado = Decimal(request.form['valor_apostado'])
@@ -712,7 +699,6 @@ class JogoController(MethodView):
                 numero_sortiado = random.randint(1, 6)
                 print(f"Número sorteado: {numero_sortiado}")
 
-                # Verifica se o jogador ganhou
                 if numero_apostado == numero_sortiado:
                     valor_final = valor_apostado * 3
                     resultado = 'ganhou'
@@ -779,10 +765,8 @@ class JogoCorController(MethodView):
 
         try:
             with connection.cursor() as cursor:
-                # Números de 0 a 30
                 numero_sorteado = random.randint(0, 30)
 
-                # Determina a cor do número sorteado
                 if numero_sorteado == 0:
                     cor_sorteada = 'verde'
                     valor_final = valor_apostado * 14
@@ -804,7 +788,6 @@ class JogoCorController(MethodView):
                         valor_final = 0
                         mensagem_resultado = f'Você apostou no {cor_apostada}. A cor sorteada foi {cor_sorteada}. Você perdeu R${valor_apostado:.2f}.'
 
-                # Obter o saldo atual do usuário
                 cursor.execute("SELECT wallet FROM users WHERE id = %s", (user_id,))
                 saldo_atual = cursor.fetchone()
 
@@ -823,7 +806,6 @@ class JogoCorController(MethodView):
                 # Atualizar o saldo do usuário no banco de dados
                 cursor.execute("UPDATE users SET wallet = %s WHERE id = %s", (novo_saldo, user_id))
 
-                # Registrar a aposta na nova tabela
                 cursor.execute("""
                     INSERT INTO color_bets (user_id, valor_apostado, cor_apostada, numero_sorteado, cor, valor_final)
                     VALUES (%s, %s, %s, %s, %s, %s)
@@ -831,13 +813,12 @@ class JogoCorController(MethodView):
 
                 connection.commit()
 
-            # Passa as variáveis necessárias para o template
             return render_template(
                 'public/jogo_cor.html',
                 cor_sorteada=cor_sorteada,
                 mensagem_resultado=mensagem_resultado,
                 saldo_atual=novo_saldo,
-                mensagens=[mensagem_resultado]  # Adiciona a mensagem ao contexto
+                mensagens=[mensagem_resultado]  
             )
 
         except Exception as e:
@@ -867,9 +848,10 @@ class ListarUsuariosController(MethodView):
         return render_template('public/listar_usuarios.html', usuarios=usuarios) 
     
 
+#puxa e coloca info do db na tela
 class UserProfileController(MethodView):
     def get(self):
-        user_id = session.get('user_id')  # Obtém o ID do usuário logado
+        user_id = session.get('user_id')  
         print(f"ID do usuário obtido da sessão: {user_id}")
 
         if user_id is None:
@@ -886,7 +868,6 @@ class UserProfileController(MethodView):
 
         try:
             with connection.cursor() as cursor:
-                # Buscar informações do usuário
                 print(f"Buscando informações do usuário com ID: {user_id}")
                 cursor.execute("SELECT username, email, birthdate, wallet FROM users WHERE id = %s", (user_id,))
                 user_info = cursor.fetchone()

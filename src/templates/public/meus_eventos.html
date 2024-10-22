@@ -5,7 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Eventos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        function searchEvents() {
+            let input = document.getElementById("searchInput").value.toUpperCase();
+            let table = document.getElementById("meusEventosTable");
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[0]; // Primeira coluna (Título)
+                if (td) {
+                    let txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(input) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -17,9 +36,12 @@
         </div>
 
         <h1 class="title">Eventos em que Estou Participando</h1>
+
+        <!-- Campo de busca -->
+        <input type="text" id="searchInput" class="search-bar" onkeyup="searchEvents()" placeholder="Buscar eventos por título...">
         
         {% if meus_eventos %}
-            <table class="event-table">
+            <table id="meusEventosTable" class="event-table">
                 <thead>
                     <tr>
                         <th>Título</th>
@@ -47,6 +69,7 @@
             <p class="no-events">Você não está participando de nenhum evento.</p>
         {% endif %}
     </div>
+
     <ul class="flashes">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -55,6 +78,6 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-      </ul>
+    </ul>
 </body>
 {% endblock %}

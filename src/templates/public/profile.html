@@ -4,85 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Eventos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script>
-        function searchEvents() {
-            let input = document.getElementById("searchInput").value.toUpperCase();
-            let table = document.getElementById("eventTable");
-            let tr = table.getElementsByTagName("tr");
-
-            for (let i = 1; i < tr.length; i++) {
-                let td = tr[i].getElementsByTagName("td")[0]; // Primeira coluna (Título)
-                if (td) {
-                    let txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(input) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }       
-            }
-        }
-    </script>
+    <title>Perfil do Usuário</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
 </head>
 <body>
-    <div class="container">
-        <div class="button-container">
-            <a href="{{ url_for('home') }}">
-                <button type="button" class="back-button">Voltar para Home</button>
-            </a>
+    <div class="profile-container">
+        <h1>Perfil de {{ user_info[0] }}</h1>
+        
+        <div class="user-details">
+            <h2>Informações Pessoais</h2>
+            <p><strong>Nome:</strong> {{ user_info[0] }}</p>
+            <p><strong>Email:</strong> {{ user_info[1] }}</p>
+            <p><strong>Data de Nascimento:</strong> {{ user_info[2] }}</p>
+            <p><strong>Saldo na Wallet:</strong> R$ {{ user_info[3] }}</p>
         </div>
 
-        <h1 class="title">Eventos Cadastrados</h1>
-
-        <!-- Campo de busca -->
-        <input type="text" id="searchInput" class="search-bar" onkeyup="searchEvents()" placeholder="Buscar eventos por título...">
-
-        {% if events %}
-            <table id="eventTable" class="event-table">
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Descrição</th>
-                        <th>Valor da Cota</th>
-                        <th>Início das Apostas</th>
-                        <th>Fim das Apostas</th>
-                        <th>Data do Evento</th>
-                        <th>Ações</th> <!-- Coluna para ações -->
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for evento in events %}
-                    <tr>
-                        <td>{{ evento[1] }}</td> <!-- Título do evento -->
-                        <td>{{ evento[2] }}</td> <!-- Descrição do evento -->
-                        <td>R$ {{ evento[3] }}</td> <!-- Valor da cota -->
-                        <td>{{ evento[4] }}</td> <!-- Início das apostas -->
-                        <td>{{ evento[5] }}</td> <!-- Fim das apostas -->
-                        <td>{{ evento[6] }}</td> <!-- Data do evento -->
-                        <td>
-                            <form action="{{ url_for('participate_event', event_id=evento[0]) }}" method="POST">
-                                <button type="submit">Participar</button>
-                            </form>
-                        </td> <!-- Botão para participar -->
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p class="no-events">Nenhum evento encontrado.</p>
-        {% endif %}
+        <div class="button-container">
+            <a href="{{ url_for('home') }}" class="btn">
+                <button type="button" class="action-btn">Voltar para Home</button>
+            </a>
+        </div>
     </div>
-
-    <ul class="flashes">
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <li class="{{ message.category }}">{{ message }}</li>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-      </ul>
 </body>
 {% endblock %}
