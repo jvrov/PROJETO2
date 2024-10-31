@@ -1,0 +1,56 @@
+<!-- moderator_dashboard.html -->
+{% extends "base.html" %}
+
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
+    <title>Painel do Moderador</title>
+</head>
+<body>
+    <h1>Painel do Moderador</h1>
+
+    <a href="{{ url_for('logout') }}" class="btn">
+        <button type="button" class="logout-btn">Logout</button>
+    </a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID do evento</th>
+                <th>Nome do Usuário</th>
+                <th>Título do Evento</th>
+                <th>Confirmação</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if participacoes %}
+                {% for participacao in participacoes %}
+                <tr>
+                    <td>{{ participacao[0] }}</td> <!-- ID do Usuário -->
+                    <td>{{ participacao[1] }}</td> <!-- Nome do Usuário -->
+                    <td>{{ participacao[2] }}</td> <!-- Título do Evento -->
+                    <td>{{ participacao[3] }}</td> <!-- Confirmação -->
+                    <td>
+                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='confirmar') }}" method="post" style="display:inline;">
+                            <button type="submit">Correto</button>
+                        </form>
+                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='negar') }}" method="post" style="display:inline;">
+                            <button type="submit">Errado</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5">Nenhuma participação encontrada.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+       
+</body>
+{% endblock %}
