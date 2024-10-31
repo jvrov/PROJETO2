@@ -3,16 +3,34 @@
 {% block content %}
 <h1>Depósito</h1>
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
 <form method="POST" action="{{ url_for('deposito', user_id=user_id) }}">
+    <!-- Campo de valor para o depósito -->
     <label for="deposit_amount">Valor a Depositar:</label>
-    <input type="number" name="deposit_amount" required>
+    <input type="number" name="deposit_amount" step="0.01" min="1" required><br><br>
+
+    <!-- Campos de informações do cartão de crédito -->
+    <h2>Informações do Cartão de Crédito</h2>
+    <label for="card_number">Número do Cartão:</label>
+    <input type="text" name="card_number" pattern="\d{16}" maxlength="16" placeholder="0000 0000 0000 0000" required><br><br>
+
+    <label for="card_expiry">Data de Validade (MM/AA):</label>
+    <input type="text" name="card_expiry" pattern="\d{2}/\d{2}" placeholder="MM/AA" required><br><br>
+
+    <label for="card_cvc">CVC:</label>
+    <input type="text" name="card_cvc" pattern="\d{3}" maxlength="3" placeholder="000" required><br><br>
+
     <button type="submit">Confirmar Depósito</button>
 </form>
+
+<!-- Botão para voltar à página inicial -->
 <div>
     <a href="{{ url_for('home') }}">
         <button type="button">Voltar para Home</button>
     </a>
 </div>
+
+<!-- Mensagens de feedback -->
 <ul class="flashes">
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -21,5 +39,5 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
-  </ul>
+</ul>
 {% endblock %}

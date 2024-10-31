@@ -13,13 +13,67 @@
     {% if amount_received is not none %}
         <p>Valor que você receberá: R$ {{ amount_received }}</p>
     {% endif %}
-    
+
+    <!-- Tabela de Taxas -->
+    <h2>Tabela de Taxas de Saque</h2>
+    <table>
+        <tr>
+            <th>Valor do Saque</th>
+            <th>Taxa Aplicada</th>
+        </tr>
+        <tr>
+            <td>Até R$ 100</td>
+            <td>4%</td>
+        </tr>
+        <tr>
+            <td>De R$ 101 a R$ 1000</td>
+            <td>3%</td>
+        </tr>
+        <tr>
+            <td>De R$ 1001 a R$ 5000</td>
+            <td>2%</td>
+        </tr>
+        <tr>
+            <td>De R$ 5001 a R$ 100.000</td>
+            <td>1%</td>
+        </tr>
+        <tr>
+            <td>Acima de R$ 101.000</td>
+            <td>Isento de taxa</td>
+        </tr>
+    </table>
+
+    <!-- Formulário de Saque -->
     <form method="POST" action="{{ url_for('sacar', user_id=user_id) }}">
         <label for="withdraw_amount">Valor do Saque:</label>
-        <input type="number" id="withdraw_amount" name="withdraw_amount" min="1" step="0.01" value="{{ withdraw_amount|default('') }}" required>
+        <input type="number" id="withdraw_amount" name="withdraw_amount" min="1" step="0.01" required><br><br>
 
-        <button type="submit">Sacar</button>
+        <!-- Método de Saque -->
+        <label for="withdraw_method">Escolha o Método de Saque:</label><br>
+        <input type="radio" id="conta_corrente" name="withdraw_method" value="conta_corrente" required>
+        <label for="conta_corrente">Conta Corrente</label><br>
+        <input type="radio" id="pix" name="withdraw_method" value="pix" required>
+        <label for="pix">PIX</label><br><br>
+
+        <!-- Campos adicionais dependendo do método -->
+        <div id="conta_corrente_fields" style="display: none;">
+            <label for="bank_name">Banco:</label>
+            <input type="text" id="bank_name" name="bank_name"><br><br>
+            <label for="agency_number">Agência:</label>
+            <input type="text" id="agency_number" name="agency_number"><br><br>
+            <label for="account_number">Número da Conta:</label>
+            <input type="text" id="account_number" name="account_number"><br><br>
+        </div>
+        
+        <div id="pix_field" style="display: none;">
+            <label for="pix_key">Chave PIX:</label>
+            <input type="text" id="pix_key" name="pix_key"><br><br>
+        </div>
+
+        <button type="submit">Confirmar Saque</button>
     </form>
+
+    <!-- Botões para voltar -->
     <div>
         <a href="{{ url_for('home') }}">
             <button type="button">Voltar para Home</button>
@@ -29,6 +83,7 @@
         </a>
     </div>
 
+    <!-- Mensagens de feedback -->
     <ul class="flashes">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -37,6 +92,28 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-      </ul>
-    
+    </ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contaCorrenteFields = document.getElementById('conta_corrente_fields');
+            const pixField = document.getElementById('pix_field');
+            const contaCorrenteRadio = document.getElementById('conta_corrente');
+            const pixRadio = document.getElementById('pix');
+
+            contaCorrenteRadio.addEventListener('change', function() {
+                if (contaCorrenteRadio.checked) {
+                    contaCorrenteFields.style.display = 'block';
+                    pixField.style.display = 'none';
+                }
+            });
+
+            pixRadio.addEventListener('change', function() {
+                if (pixRadio.checked) {
+                    pixField.style.display = 'block';
+                    contaCorrenteFields.style.display = 'none';
+                }
+            });
+        });
+    </script>
 {% endblock %}

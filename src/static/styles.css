@@ -434,12 +434,12 @@ input, select, textarea {
 }
 
 input:focus, select:focus, textarea:focus {
-  border-color: #007bff;
+  border-color: #ff9999;
   outline: none;
 }
 
 button:focus {
-  outline: 3px solid #007bff;
+  outline: 3px solid #ff9999;
   outline-offset: 2px;
 }
 

@@ -28,7 +28,6 @@
 </head>
 <body>
     <div class="container">
-
         <div class="button-container">
             <a href="{{ url_for('home') }}">
                 <button type="button" class="back-button">Voltar para Home</button>
@@ -50,6 +49,7 @@
                         <th>Início das Apostas</th>
                         <th>Fim das Apostas</th>
                         <th>Data do Evento</th>
+                        <th>Confirmação</th> <!-- Coluna de confirmação -->
                     </tr>
                 </thead>
                 <tbody>
@@ -61,9 +61,11 @@
                         <td>{{ evento[4] }}</td> <!-- Início das apostas -->
                         <td>{{ evento[5] }}</td> <!-- Fim das apostas -->
                         <td>{{ evento[6] }}</td> <!-- Data do evento -->
+                        <td>{{ evento[7] }}</td> <!-- Coluna de confirmação -->
                     </tr>
                     {% endfor %}
                 </tbody>
+                
             </table>
         {% else %}
             <p class="no-events">Você não está participando de nenhum evento.</p>

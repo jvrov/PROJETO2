@@ -491,15 +491,18 @@ class WithdrawController(MethodView):
         finally:
             connection.close()
 
+
+
+
 class ParticipateController(MethodView):
     def post(self, event_id):
-        # ve se o usuário está logado
+        # Verifica se o usuário está logado
         if 'user_id' not in session:
             flash('Você precisa estar logado para participar de um evento.', 'danger')
             return redirect(url_for('login'))
 
         user_id = session['user_id']
-
+        
         connection = pymysql.connect(
             host='localhost',
             user='root',
@@ -509,14 +512,14 @@ class ParticipateController(MethodView):
 
         try:
             with connection.cursor() as cursor:
-                # ve se o usuário já participou do evento
+                # Verifica se o usuário já participou do evento
                 cursor.execute("SELECT * FROM participacoes WHERE user_id = %s AND event_id = %s", (user_id, event_id))
                 participation = cursor.fetchone()
 
                 if participation:
                     flash('Você já está participando deste evento.', 'warning')
                 else:
-                    # ve o valor da cota do evento
+                    # Pega o valor da cota do evento
                     cursor.execute("SELECT value FROM events WHERE id = %s", (event_id,))
                     event = cursor.fetchone()
 
@@ -524,26 +527,42 @@ class ParticipateController(MethodView):
                         flash('Evento não encontrado.', 'danger')
                         return redirect(url_for('listar_eventos'))
 
-                    event_value = float(event[0])  # passa para float
+                    event_value = float(event[0])  # Converte para float
 
-                    # ve o saldo do usuário
+                    # Pega o saldo do usuário
                     cursor.execute("SELECT wallet FROM users WHERE id = %s", (user_id,))
                     current_wallet = cursor.fetchone()[0]
-                    current_wallet = float(current_wallet)  # passa para float
+                    current_wallet = float(current_wallet)  # Converte para float
 
-                    # ve se paga
+                    # Verifica se o usuário tem saldo suficiente
                     if event_value > current_wallet:
                         flash('Saldo insuficiente. Faça um crédito na sua carteira.', 'danger')
                         return redirect(url_for('listar_eventos'))
 
-                    # Att o saldo do usuário
+                    # Atualiza o saldo do usuário
                     new_wallet_balance = current_wallet - event_value
                     cursor.execute("UPDATE users SET wallet = %s WHERE id = %s", (new_wallet_balance, user_id))
                     connection.commit()
 
+                    # Salva a confirmação na tabela
+                    confirmation = request.form.get('confirmacao')
+                    print(f"Confirmação recebida: {confirmation}")  # Print para depuração
+
+                    if confirmation == 'sim':
+                        confirmation_value = 'SIM'
+                    else:
+                        confirmation_value = 'NAO'
                     
-                    cursor.execute("INSERT INTO participacoes (user_id, event_id) VALUES (%s, %s)", (user_id, event_id))
+                    cursor.execute("INSERT INTO participacoes (user_id, event_id, confirmacao) VALUES (%s, %s, %s)", 
+                                   (user_id, event_id, confirmation_value))
                     connection.commit()
+                    print(f"Participação inserida: user_id={user_id}, event_id={event_id}, confirmacao='{confirmation_value}'")  # Print da inserção
+                    
+                    # Verifica se a inserção foi bem-sucedida
+                    cursor.execute("SELECT * FROM participacoes WHERE user_id = %s AND event_id = %s", (user_id, event_id))
+                    inserted_participation = cursor.fetchone()
+                    print(f"Participação registrada na tabela: {inserted_participation}")  # Print da nova participação
+                    
                     flash('Você participou do evento com sucesso!', 'success')
 
                 return redirect(url_for('listar_eventos'))
@@ -561,7 +580,6 @@ class MeusEventosController(MethodView):
         user_id = session.get('user_id')  
         
         if user_id:
-            
             connection = pymysql.connect(
                 host='localhost',
                 user='root',
@@ -571,7 +589,7 @@ class MeusEventosController(MethodView):
             cursor = connection.cursor()
 
             query = """
-                SELECT e.id, e.titulo, e.descricao, e.valor_cota, e.inicio_apostas, e.fim_apostas, e.data_evento
+                SELECT e.id, e.titulo, e.descricao, e.valor_cota, e.inicio_apostas, e.fim_apostas, e.data_evento, p.confirmacao
                 FROM events e
                 JOIN participacoes p ON e.id = p.event_id
                 WHERE p.user_id = %s
@@ -584,18 +602,15 @@ class MeusEventosController(MethodView):
             return render_template('public/meus_eventos.html', meus_eventos=meus_eventos)
         else:
             return redirect(url_for('home'))
-        
-        
+
+
 class ParticipateController(MethodView):
     def post(self, event_id):
-        
         if 'user_id' not in session:
             flash('Você precisa estar logado para participar de um evento.', 'danger')
-            print("Usuário não está logado.")
             return redirect(url_for('login'))
 
         user_id = session['user_id']
-        print(f"Usuário ID: {user_id}")
 
         connection = pymysql.connect(
             host='localhost',
@@ -606,69 +621,56 @@ class ParticipateController(MethodView):
 
         try:
             with connection.cursor() as cursor:
-         
+                # Verifica se o usuário já participou do evento
                 cursor.execute("SELECT * FROM participacoes WHERE user_id = %s AND event_id = %s", (user_id, event_id))
                 participation = cursor.fetchone()
 
                 if participation:
                     flash('Você já está participando deste evento.', 'warning')
-                else:
-                    
-                    cursor.execute("SELECT valor_cota FROM events WHERE id = %s", (event_id,))
-                    event = cursor.fetchone()
+                    return redirect(url_for('listar_eventos'))
 
-                    if event:
-                        valor_cota = event[0]  
-                        print(f"Valor da cota: {valor_cota}")
+                # Pega o valor da cota do evento
+                cursor.execute("SELECT valor_cota FROM events WHERE id = %s", (event_id,))
+                event = cursor.fetchone()
 
-                        # ve o saldo da wallet do usuário
-                        cursor.execute("SELECT wallet FROM users WHERE id = %s", (user_id,))
-                        user_wallet = cursor.fetchone()
-                        print(f"Wallet do usuário: {user_wallet}")
+                if event is None:
+                    flash('Evento não encontrado.', 'danger')
+                    return redirect(url_for('listar_eventos'))
 
-                        if user_wallet:
-                            if user_wallet[0] >= valor_cota:  
-                                
-                                novo_saldo = user_wallet[0] - valor_cota
-                                cursor.execute("UPDATE users SET wallet = %s WHERE id = %s", (novo_saldo, user_id))
-                                connection.commit()  # confirma a transação
-                            
-                                cursor.execute("INSERT INTO participacoes (user_id, event_id, data_participacao) VALUES (%s, %s, NOW())", (user_id, event_id))
-                                connection.commit()  
-                                flash('Você participou do evento com sucesso!', 'success')
-                            else:
-                                flash('Saldo insuficiente na wallet para participar deste evento.', 'danger')
-                        else:
-                            flash('Usuário não encontrado.', 'danger')
-                    else:
-                        flash('Evento não encontrado.', 'danger')
+                event_value = float(event[0])  # Converte para float
 
+                # Verifica o saldo do usuário
+                cursor.execute("SELECT wallet FROM users WHERE id = %s", (user_id,))
+                current_wallet = cursor.fetchone()[0]
+                current_wallet = float(current_wallet)  # Converte para float
+
+                # Verifica se o usuário tem saldo suficiente
+                if event_value > current_wallet:
+                    flash('Saldo insuficiente. Faça um crédito na sua carteira.', 'danger')
+                    return redirect(url_for('listar_eventos'))
+
+                # Atualiza o saldo do usuário
+                new_wallet_balance = current_wallet - event_value
+                cursor.execute("UPDATE users SET wallet = %s WHERE id = %s", (new_wallet_balance, user_id))
+                connection.commit()
+
+                # Insere a participação na tabela com confirmação
+                confirmation = request.form.get('confirmacao')  # Obtém a confirmação (sim ou não)
+                print(f"Confirmação recebida: {confirmation}")  # Debug
+                cursor.execute("INSERT INTO participacoes (user_id, event_id, confirmacao) VALUES (%s, %s, %s)", (user_id, event_id, confirmation))
+                connection.commit()
+
+                flash('Você participou do evento com sucesso!', 'success')
                 return redirect(url_for('listar_eventos'))
 
         except Exception as e:
             flash(f'Ocorreu um erro ao participar do evento: {str(e)}', 'danger')
-            print(f"Erro ao participar do evento: {str(e)}")
             return redirect(url_for('listar_eventos'))
 
         finally:
-            connection.close()  
-            print("Conexão fechada.")
-
-    def realizar_sorteio(self, event_id):
-        connection = pymysql.connect(host='localhost', user='root', password='', db='db_cadastro')
-        
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT user_id FROM apostas WHERE event_id = %s", (event_id,))
-                participantes = cursor.fetchall()
-                
-                if participantes:
-                    ganhador = random.choice(participantes)
-                    flash(f'O ganhador do evento {event_id} é o usuário {ganhador["user_id"]}!', 'success')
-                else:
-                    flash('Nenhum participante para sortear.', 'warning')
-        finally:
             connection.close()
+
+
 
 class JogoController(MethodView):
     def get(self):

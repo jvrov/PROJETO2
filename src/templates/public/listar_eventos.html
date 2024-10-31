@@ -6,24 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Eventos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script>
-        function searchEvents() {
-            let input = document.getElementById("searchInput").value.toUpperCase();
-            let table = document.getElementById("eventTable");
-            let tr = table.getElementsByTagName("tr");
 
-            for (let i = 1; i < tr.length; i++) {
-                let td = tr[i].getElementsByTagName("td")[0]; // Primeira coluna (Título)
-                if (td) {
-                    let txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(input) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Busca todos os botões "Participar" e adiciona o listener
+            document.querySelectorAll(".participate-button").forEach(button => {
+                button.addEventListener("click", function() {
+                    let eventId = this.dataset.eventId;
+                    document.getElementById(`participate-btn-${eventId}`).style.display = "none";
+                    document.getElementById(`confirmation-btns-${eventId}`).style.display = "inline";
+                });
+            });
+
+            // Função de busca de eventos
+            document.getElementById("searchInput").addEventListener("keyup", function() {
+                let input = this.value.toUpperCase();
+                let rows = document.getElementById("eventTable").getElementsByTagName("tr");
+                for (let i = 1; i < rows.length; i++) {
+                    let titleCell = rows[i].getElementsByTagName("td")[0];
+                    if (titleCell) {
+                        let titleText = titleCell.textContent || titleCell.innerText;
+                        rows[i].style.display = titleText.toUpperCase().includes(input) ? "" : "none";
                     }
-                }       
-            }
-        }
+                }
+            });
+        });
     </script>
 </head>
 <body>
@@ -37,7 +44,7 @@
         <h1 class="title">Eventos Cadastrados</h1>
 
         <!-- Campo de busca -->
-        <input type="text" id="searchInput" class="search-bar" onkeyup="searchEvents()" placeholder="Buscar eventos por título...">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Buscar eventos por título...">
 
         {% if events %}
             <table id="eventTable" class="event-table">
@@ -49,23 +56,29 @@
                         <th>Início das Apostas</th>
                         <th>Fim das Apostas</th>
                         <th>Data do Evento</th>
-                        <th>Ações</th> <!-- Coluna para ações -->
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for evento in events %}
                     <tr>
-                        <td>{{ evento[1] }}</td> <!-- Título do evento -->
-                        <td>{{ evento[2] }}</td> <!-- Descrição do evento -->
-                        <td>R$ {{ evento[3] }}</td> <!-- Valor da cota -->
-                        <td>{{ evento[4] }}</td> <!-- Início das apostas -->
-                        <td>{{ evento[5] }}</td> <!-- Fim das apostas -->
-                        <td>{{ evento[6] }}</td> <!-- Data do evento -->
+                        <td>{{ evento[1] }}</td>
+                        <td>{{ evento[2] }}</td>
+                        <td>R$ {{ evento[3] }}</td>
+                        <td>{{ evento[4] }}</td>
+                        <td>{{ evento[5] }}</td>
+                        <td>{{ evento[6] }}</td>
                         <td>
                             <form action="{{ url_for('participate_event', event_id=evento[0]) }}" method="POST">
-                                <button type="submit">Participar</button>
+                                <div id="participate-btn-{{ evento[0] }}">
+                                    <button type="button" class="participate-button" data-event-id="{{ evento[0] }}">Participar</button>
+                                </div>
+                                <div id="confirmation-btns-{{ evento[0] }}" style="display: none;">
+                                    <button type="submit" name="confirmacao" value="sim">Sim</button>
+                                    <button type="submit" name="confirmacao" value="nao">Não</button>
+                                </div>
                             </form>
-                        </td> <!-- Botão para participar -->
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -77,12 +90,12 @@
 
     <ul class="flashes">
         {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <li class="{{ message.category }}">{{ message }}</li>
-            {% endfor %}
-          {% endif %}
+            {% if messages %}
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
-      </ul>
+    </ul>
 </body>
 {% endblock %}
