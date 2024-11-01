@@ -149,9 +149,12 @@ tr:hover {
 }
 
 .dado-imagem {
-  width: 100px; /* Tamanho desejado da imagem */
-  height: 100px; /* Tamanho desejado da imagem */
+  width: 150px; /* Ajuste o tamanho conforme necessário */
+  height: auto; /* Mantém a proporção da imagem */
+  display: block; /* Garante que a imagem seja exibida como um bloco */
+  margin: 10px auto; /* Centraliza a imagem, se necessário */
 }
+
 
 /* Estilo do botão de voltar */
 .back-button {
@@ -443,17 +446,12 @@ button:focus {
   outline-offset: 2px;
 }
 
-img {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
 
-img.loaded {
-  opacity: 1;
-}
+
+
 
 button:focus-visible {
-  outline: 3px solid #007bff;
+  outline: 3px solid #ff9999;
   outline-offset: 2px;
 }
 
@@ -462,3 +460,4 @@ button:focus-visible {
     display: none;
   }
 }
+

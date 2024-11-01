@@ -21,7 +21,7 @@
     
     {% if numero_sortiado %}
         <h2>Número sorteado: {{ numero_sortiado }}</h2>
-        <img src="{{ url_for('static', filename='images/dado_' ~ numero_sortiado ~ '.png') }}" alt="Dado sorteado" class="dado-imagem">
+        <img src="{{ url_for('static', filename='images/dado_' ~ numero_sortiado ~ '.png') }}" alt="Dado sorteado" class="dado-imagem" onerror="this.style.display='none';">
         
         {% if mensagem_resultado %}
             <p>{{ mensagem_resultado }}</p>

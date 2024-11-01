@@ -1,4 +1,3 @@
-<!-- moderator_dashboard.html -->
 {% extends "base.html" %}
 
 {% block content %}
@@ -8,6 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
     <title>Painel do Moderador</title>
+    <script>
+        function removeRow(row) {
+            const rowIndex = row.parentNode.parentNode.rowIndex; // Obtem o índice da linha
+            document.getElementById("participacoesTable").deleteRow(rowIndex); // Remove a linha
+        }
+
+        function searchParticipacoes() {
+            const input = document.getElementById('searchInput'); // Obtem o campo de busca
+            const filter = input.value.toLowerCase(); // Obtém o valor e converte para minúsculas
+            const table = document.getElementById('participacoesTable');
+            const trs = table.getElementsByTagName('tr'); // Obtém todas as linhas da tabela
+
+            // Percorre todas as linhas da tabela (exceto a primeira que é o cabeçalho)
+            for (let i = 1; i < trs.length; i++) {
+                const tds = trs[i].getElementsByTagName('td');
+                let rowVisible = false; // Inicializa a visibilidade da linha como falsa
+
+                // Verifica cada célula da linha
+                for (let j = 0; j < tds.length; j++) {
+                    if (tds[j]) {
+                        const txtValue = tds[j].textContent || tds[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            rowVisible = true; // Se o texto for encontrado, define a linha como visível
+                        }
+                    }
+                }
+
+                // Exibe ou oculta a linha com base na pesquisa
+                trs[i].style.display = rowVisible ? "" : "none"; 
+            }
+        }
+    </script>
+    
 </head>
 <body>
     <h1>Painel do Moderador</h1>
@@ -16,10 +48,12 @@
         <button type="button" class="logout-btn">Logout</button>
     </a>
 
-    <table>
+    <input type="text" id="searchInput" onkeyup="searchParticipacoes()" placeholder="Buscar por ID, Nome ou Título..." style="margin-bottom: 10px; width: 100%; padding: 8px;">
+
+    <table id="participacoesTable">
         <thead>
             <tr>
-                <th>ID do evento</th>
+                <th>ID do Evento</th>
                 <th>Nome do Usuário</th>
                 <th>Título do Evento</th>
                 <th>Confirmação</th>
@@ -29,16 +63,16 @@
         <tbody>
             {% if participacoes %}
                 {% for participacao in participacoes %}
-                <tr>
+                <tr id="participacao-{{ participacao[0] }}">
                     <td>{{ participacao[0] }}</td> <!-- ID do Usuário -->
                     <td>{{ participacao[1] }}</td> <!-- Nome do Usuário -->
                     <td>{{ participacao[2] }}</td> <!-- Título do Evento -->
                     <td>{{ participacao[3] }}</td> <!-- Confirmação -->
                     <td>
-                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='confirmar') }}" method="post" style="display:inline;">
+                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='confirmar') }}" method="post" style="display:inline;" onsubmit="removeRow(this);">
                             <button type="submit">Correto</button>
                         </form>
-                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='negar') }}" method="post" style="display:inline;">
+                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='negar') }}" method="post" style="display:inline;" onsubmit="removeRow(this);">
                             <button type="submit">Errado</button>
                         </form>
                     </td>

@@ -19,6 +19,36 @@
             <p><strong>Saldo na Wallet:</strong> R$ {{ user_info[3] }}</p>
         </div>
 
+        <div class="transaction-history">
+            <h2>Histórico de Transações</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if transacoes %}
+                        {% for transacao in transacoes %}
+                            <tr>
+                                <td>{{ transacao[0] }}</td> <!-- ID da Transação -->
+                                <td>{{ transacao[1] }}</td> <!-- Tipo da Transação -->
+                                <td>R$ {{ transacao[2] }}</td> <!-- Valor da Transação -->
+                                <td>{{ transacao[3].strftime('%Y-%m-%d %H:%M:%S') }}</td> <!-- Data da Transação -->
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">Nenhuma transação encontrada.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
         <div class="button-container">
             <a href="{{ url_for('home') }}" class="btn">
                 <button type="button" class="action-btn">Voltar para Home</button>
