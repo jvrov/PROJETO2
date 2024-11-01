@@ -142,75 +142,79 @@ class AdminDashboardController(MethodView):
             flash('Acesso negado! Somente administradores podem acessar esta página.', 'danger')
             return redirect(url_for('home'))
 
-
-
 class ModeratorDashboardController(MethodView):
     def get(self):
-        # Verifica se o usuário está autenticado
+        # Verifica se o usuário está autenticado e se é um moderador
         if 'user_id' not in session or session.get('is_admin') != 2:
             flash('Acesso negado. Apenas moderadores podem acessar essa página.', 'danger')
             return redirect(url_for('login'))
 
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='db_cadastro',   
+            cursorclass=pymysql.cursors.DictCursor
+        )
+
         try:
-            connection = pymysql.connect(
-                host='localhost',
-                user='root',
-                password='',
-                db='db_cadastro'
-            )
-            print("Conexão com o banco de dados estabelecida com sucesso.")
             with connection.cursor() as cursor:
-                # Recupera todas as participações
+                # Recupera todas as participações com detalhes do usuário e do evento
                 cursor.execute("""
-                    SELECT p.id, u.username, e.titulo, p.confirmacao
+                    SELECT p.id AS participacao_id, u.username, e.titulo, p.confirmacao
                     FROM participacoes p
                     JOIN users u ON p.user_id = u.id
                     JOIN events e ON p.event_id = e.id
                 """)
                 participacoes = cursor.fetchall()
 
-                print(f"Participações recuperadas: {participacoes}")
-
         except Exception as e:
             print(f"Erro ao recuperar participações: {e}")
             flash('Erro ao recuperar participações.', 'danger')
-            participacoes = []  # Define uma lista vazia em caso de erro
+            participacoes = []
 
         finally:
-            connection.close()  # Garante que a conexão seja fechada
+            connection.close()
 
-        # Retorna o template, mesmo que participações esteja vazia
         return render_template('public/moderator_dashboard.html', participacoes=participacoes)
 
     def post(self, participacao_id, action):
+        # Verifica se o usuário está autenticado e se é um moderador
+        if 'user_id' not in session or session.get('is_admin') != 2:
+            flash('Acesso negado. Apenas moderadores podem acessar essa página.', 'danger')
+            return redirect(url_for('login'))
+
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='db_cadastro'
+        )
+
         try:
-            connection = pymysql.connect(
-                host='localhost',
-                user='root',
-                password='',
-                db='db_cadastro'
-            )
-            print("Conexão com o banco de dados estabelecida com sucesso.")
             with connection.cursor() as cursor:
                 # Recupera a participação
                 cursor.execute("SELECT user_id, event_id FROM participacoes WHERE id = %s", (participacao_id,))
                 participacao = cursor.fetchone()
-                
+
                 if participacao:
                     user_id, event_id = participacao
-                    
+
                     # Recupera o valor do evento
                     cursor.execute("SELECT valor_cota FROM events WHERE id = %s", (event_id,))
                     evento = cursor.fetchone()
-                    
+
                     if evento:
                         valor_cota = evento[0]
-                        
+
                         if action == 'confirmar':
                             # Duplica o valor e adiciona à wallet do usuário
                             novo_saldo = valor_cota * 2
+
+                            # Atualiza o saldo na wallet do usuário
                             cursor.execute("UPDATE users SET wallet = wallet + %s WHERE id = %s", (novo_saldo, user_id))
                             flash('Pagamento realizado com sucesso!', 'success')
+
                         elif action == 'negar':
                             # Remove a participação
                             cursor.execute("DELETE FROM participacoes WHERE id = %s", (participacao_id,))
@@ -226,16 +230,40 @@ class ModeratorDashboardController(MethodView):
         except Exception as e:
             print(f"Erro ao processar a solicitação: {e}")
             flash('Erro ao processar a solicitação.', 'danger')
+
         finally:
             connection.close()
 
         return redirect(url_for('moderator_dashboard'))
 
 
+class EventApprovalController(MethodView):
+    def post(self, event_id, action):
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            db='db_cadastro'
+        )
 
+        try:
+            with connection.cursor() as cursor:
+                if action == 'approve':
+                    # Aprovar o evento
+                    cursor.execute("UPDATE events SET is_approved = 1 WHERE id = %s", (event_id,))
+                    flash('Evento aprovado com sucesso!', 'success')
+                elif action == 'reject':
+                    # Negar o evento
+                    cursor.execute("UPDATE events SET is_approved = 0 WHERE id = %s", (event_id,))
+                    flash('Evento negado com sucesso!', 'warning')
 
+                connection.commit()
+        except Exception as e:
+            flash(f'Ocorreu um erro ao processar a ação: {str(e)}', 'danger')
+        finally:
+            connection.close()
 
-
+        return redirect(url_for('moderator_dashboard'))  # Redireciona para o
 
 class EventosAgoraController(MethodView):
     def get(self):

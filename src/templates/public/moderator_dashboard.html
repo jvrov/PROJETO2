@@ -1,90 +1,127 @@
 {% extends "base.html" %}
 
 {% block content %}
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
     <title>Painel do Moderador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
     <script>
-        function removeRow(row) {
-            const rowIndex = row.parentNode.parentNode.rowIndex; // Obtem o índice da linha
-            document.getElementById("participacoesTable").deleteRow(rowIndex); // Remove a linha
-        }
-
         function searchParticipacoes() {
-            const input = document.getElementById('searchInput'); // Obtem o campo de busca
-            const filter = input.value.toLowerCase(); // Obtém o valor e converte para minúsculas
-            const table = document.getElementById('participacoesTable');
-            const trs = table.getElementsByTagName('tr'); // Obtém todas as linhas da tabela
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById("participacoesTable");
+            const trs = table.getElementsByTagName("tr");
 
-            // Percorre todas as linhas da tabela (exceto a primeira que é o cabeçalho)
+            // Percorre todas as linhas da tabela (a partir da linha 1, já que a linha 0 é o cabeçalho)
             for (let i = 1; i < trs.length; i++) {
-                const tds = trs[i].getElementsByTagName('td');
-                let rowVisible = false; // Inicializa a visibilidade da linha como falsa
+                const tds = trs[i].getElementsByTagName("td");
+                let userFound = false;
+                let eventFound = false;
 
-                // Verifica cada célula da linha
-                for (let j = 0; j < tds.length; j++) {
-                    if (tds[j]) {
-                        const txtValue = tds[j].textContent || tds[j].innerText;
-                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                            rowVisible = true; // Se o texto for encontrado, define a linha como visível
-                        }
-                    }
+                // Verifica se o nome do usuário ou o título do evento contém o texto de busca
+                if (tds.length > 0) {
+                    const username = tds[0].textContent || tds[0].innerText;
+                    const title = tds[1].textContent || tds[1].innerText;
+
+                    userFound = username.toLowerCase().includes(filter);
+                    eventFound = title.toLowerCase().includes(filter);
                 }
 
-                // Exibe ou oculta a linha com base na pesquisa
-                trs[i].style.display = rowVisible ? "" : "none"; 
+                // Exibe ou oculta a linha com base na busca
+                if (userFound || eventFound) {
+                    trs[i].style.display = "";
+                } else {
+                    trs[i].style.display = "none";
+                }
             }
         }
+
+        function confirmAction(form, participacaoId) {
+            // Previne o envio do formulário padrão
+            event.preventDefault();
+
+            // Envia o formulário via AJAX
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remove a linha correspondente
+                    const row = document.getElementById(`participacao-${participacaoId}`);
+                    if (row) {
+                        row.style.display = 'none'; // Esconde a linha
+                    }
+                } else {
+                    // Se a resposta não for ok, você pode mostrar uma mensagem de erro
+                    alert('Erro ao processar a solicitação. Tente novamente.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar a solicitação:', error);
+                alert('Erro ao enviar a solicitação. Tente novamente.');
+            });
+
+            return false; // Impede o envio do formulário padrão
+        }
     </script>
-    
 </head>
 <body>
-    <h1>Painel do Moderador</h1>
+    <div class="container">
+        <h1>Painel do Moderador</h1>
 
-    <a href="{{ url_for('logout') }}" class="btn">
-        <button type="button" class="logout-btn">Logout</button>
-    </a>
+        <a href="{{ url_for('logout') }}" class="btn" style="margin-bottom: 20px;">
+            <button type="button" class="logout-btn">Logout</button>
+        </a>
 
-    <input type="text" id="searchInput" onkeyup="searchParticipacoes()" placeholder="Buscar por ID, Nome ou Título..." style="margin-bottom: 10px; width: 100%; padding: 8px;">
-
-    <table id="participacoesTable">
-        <thead>
-            <tr>
-                <th>ID do Evento</th>
-                <th>Nome do Usuário</th>
-                <th>Título do Evento</th>
-                <th>Confirmação</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if participacoes %}
-                {% for participacao in participacoes %}
-                <tr id="participacao-{{ participacao[0] }}">
-                    <td>{{ participacao[0] }}</td> <!-- ID do Usuário -->
-                    <td>{{ participacao[1] }}</td> <!-- Nome do Usuário -->
-                    <td>{{ participacao[2] }}</td> <!-- Título do Evento -->
-                    <td>{{ participacao[3] }}</td> <!-- Confirmação -->
-                    <td>
-                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='confirmar') }}" method="post" style="display:inline;" onsubmit="removeRow(this);">
-                            <button type="submit">Correto</button>
-                        </form>
-                        <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao[0], action='negar') }}" method="post" style="display:inline;" onsubmit="removeRow(this);">
-                            <button type="submit">Errado</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="5">Nenhuma participação encontrada.</td>
-                </tr>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
             {% endif %}
-        </tbody>
-    </table>
-       
+        {% endwith %}
+
+        <h2>Participações Pendentes</h2>
+
+        <input type="text" id="searchInput" placeholder="Buscar por usuário ou evento..." onkeyup="searchParticipacoes()" style="margin-bottom: 10px;">
+
+        <table id="participacoesTable">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Evento</th>
+                    <th>Confirmação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if participacoes %}
+                    {% for participacao in participacoes %}
+                        <tr id="participacao-{{ participacao.participacao_id }}">
+                            <td>{{ participacao.username }}</td>
+                            <td>{{ participacao.titulo }}</td>
+                            <td>{{ participacao.confirmacao }}</td>
+                            <td>
+                                <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao.participacao_id, action='confirmar') }}" method="post" style="display:inline;" onsubmit="return confirmAction(this, '{{ participacao.participacao_id }}')">
+                                    <button type="submit">Aprovar Pagamento</button>
+                                </form>
+                                <form action="{{ url_for('moderator_dashboard_action', participacao_id=participacao.participacao_id, action='negar') }}" method="post" style="display:inline;" onsubmit="return confirmAction(this, '{{ participacao.participacao_id }}')">
+                                    <button type="submit" style="background-color: red; color: white;">Errado</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4">Nenhuma participação encontrada.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </body>
 {% endblock %}
