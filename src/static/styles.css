@@ -85,15 +85,15 @@ button:hover {
 
 /* Estilo da tabela */
 table {
-  width: 100%; /* Definindo uma largura específica, você pode ajustar conforme necessário */
+  width: 100%; /* Definindo uma largura específica */
   border-collapse: collapse;
   margin: 20px 0; /* Margem entre a tabela e outros elementos */
   font-size: 1rem;
   text-align: left;
   background-color: #1c1f24; /* Fundo da tabela escuro */
   color: #ffffff; /* Texto claro */
-  border-radius: 8px;
-  overflow: hidden;
+  border-radius: 8px; /* Cantos arredondados */
+  overflow: hidden; /* Para evitar que o conteúdo exceda os limites */
 }
 
 /* Estilo das células da tabela */
@@ -460,4 +460,87 @@ button:focus-visible {
     display: none;
   }
 }
+
+
+
+.profile-container {
+  max-width: 800px; /* Largura máxima do container */
+  margin: 20px auto; /* Centraliza o container na página */
+  padding: 20px; /* Espaçamento interno */
+  background-color: #1a1a1a; /* Cor de fundo do perfil */
+  border-radius: 10px; /* Cantos arredondados */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Sombra leve */
+}
+
+
+
+.user-details, .transaction-history {
+  margin-top: 20px; /* Margem acima das seções */
+  padding: 15px; /* Espaçamento interno */
+  background-color: #333; /* Cor de fundo das seções */
+  border-radius: 8px; /* Cantos arredondados */
+}
+
+.confirmation-container {
+  max-width: 600px; /* Largura máxima do container */
+  margin: 50px auto; /* Centraliza o container na página */
+  padding: 20px; /* Espaçamento interno */
+  background-color: #1a1a1a; /* Cor de fundo do container */
+  border-radius: 10px; /* Cantos arredondados */
+  text-align: center; /* Centraliza o texto dentro do container */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Sombra leve */
+}
+
+.confirmation-container {
+  max-width: 600px; /* Largura máxima do container */
+  margin: 50px auto; /* Centraliza o container na página */
+  padding: 20px; /* Espaçamento interno */
+  background-color: #1a1a1a; /* Cor de fundo do container */
+  border-radius: 10px; /* Cantos arredondados */
+  text-align: center; /* Centraliza o texto dentro do container */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Sombra leve */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"] {
+    width: 100%; /* Largura total dos campos */
+    padding: 10px; /* Espaçamento interno */
+    margin-bottom: 20px; /* Espaço abaixo do campo */
+    border: none; /* Remove bordas padrão */
+    border-radius: 5px; /* Cantos arredondados */
+    background-color: #333; /* Cor de fundo dos campos */
+    color: white; /* Cor do texto dos campos */
+}
+
+.home-container {
+  max-width: 1200px; /* Largura máxima do contêiner */
+  margin: 0 auto; /* Centraliza o contêiner */
+  padding: 20px; /* Espaçamento interno */
+}
+
+.welcome-section {
+  text-align: center; /* Centraliza o texto */
+  margin-bottom: 40px; /* Espaço abaixo da seção de boas-vindas */
+}
+
+
+th, td {
+  padding: 10px; /* Espaçamento interno das células */
+  border: 1px solid #ddd; /* Borda leve */
+  text-align: left; /* Alinhamento do texto */
+}
+
+th {
+  background-color: #444; /* Cor de fundo dos cabeçalhos */
+}
+
+.button-container {
+  text-align: center; /* Centraliza os botões */
+  margin-top: 20px; /* Margem acima do container de botões */
+}
+
+
+
 

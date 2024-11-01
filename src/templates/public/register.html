@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 <h1>Criar Conta</h1>
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
 <form method="POST" action="{{ url_for('register') }}">
     <label for="username">Nome de Usuário:</label>
