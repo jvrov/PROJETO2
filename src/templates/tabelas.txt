@@ -1,29 +1,112 @@
+-- Tabela users
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     birthdate DATE NOT NULL,
-    wallet DECIMAL(10, 2) DEFAULT 0.00
+    wallet DECIMAL(10,2) DEFAULT 0.00,
+    is_admin TINYINT(1) DEFAULT 0,
+    valor_ganho DECIMAL(10,2) DEFAULT 0.00
 );
 
+-- Tabela bets
+CREATE TABLE bets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    tipo_jogo VARCHAR(50) NOT NULL,
+    valor_apostado DECIMAL(10,2) NOT NULL,
+    valor_ganho DECIMAL(10,2) DEFAULT 0.00,
+    status VARCHAR(50) NOT NULL,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Tabela color_bet
+CREATE TABLE color_bet (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    data_aposta DATETIME DEFAULT CURRENT_TIMESTAMP,
+    valor_apostado DECIMAL(10,2) NOT NULL,
+    cor_apostada VARCHAR(50) NOT NULL,
+    cor_sorteada VARCHAR(50),
+    multiplicador DECIMAL(10,2) NOT NULL,
+    valor_ganho DECIMAL(10,2) DEFAULT 0.00,
+    status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Tabela eventos_pendentes
+CREATE TABLE eventos_pendentes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    descricao TEXT NOT NULL,
+    valor_cota DECIMAL(10,2) NOT NULL,
+    inicio_apostas DATETIME NOT NULL,
+    fim_apostas DATETIME NOT NULL,
+    data_evento DATETIME NOT NULL,
+    user_id INT NOT NULL,
+    status VARCHAR(50) DEFAULT 'pendente',
+    motivos_rejeicao TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Tabela events
 CREATE TABLE events (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(50) NOT NULL,
-    descricao VARCHAR(150),
-    valor_cota DECIMAL(10, 2) NOT NULL CHECK (valor_cota >= 1),
+    titulo VARCHAR(255) NOT NULL,
+    descricao TEXT NOT NULL,
+    valor_cota DECIMAL(10,2) NOT NULL,
     inicio_apostas DATETIME NOT NULL,
-    fim_apostas DATETIME NOT NULL,  -- Adicionando a coluna fim_apostas para o período de apostas
-    data_evento DATE NOT NULL,
-    num_apostas INT DEFAULT 0,      -- Coluna para armazenar o número de apostas
-    valor_total DECIMAL(15, 2) DEFAULT 0.00  -- Valor acumulado das apostas
+    fim_apostas DATETIME NOT NULL,
+    data_evento DATETIME NOT NULL,
+    user_id INT NOT NULL,
+    aprovado TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Tabela movimentacoes
+CREATE TABLE movimentacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    valor DECIMAL(10,2) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Tabela participacoes
 CREATE TABLE participacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,  -- ID do usuário que participou do evento
-    event_id INT,  -- ID do evento
-    data_participacao DATETIME,  -- Data de participação
+    user_id INT NOT NULL,
+    event_id INT NOT NULL,
+    confirmacao TINYINT(1) DEFAULT 0,
+    status VARCHAR(50) NOT NULL,
+    transaction_id VARCHAR(255),
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (event_id) REFERENCES events(id)
+);
+
+-- Tabela payments
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    valor DECIMAL(10,2) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    transaction_id VARCHAR(255),
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Tabela transacoes
+CREATE TABLE transacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    valor DECIMAL(10,2) NOT NULL,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );

@@ -1,54 +1,257 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}Home - Sistema de Apostas{% endblock %}
 
 {% block content %}
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ApostaVip</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-  
-  <div class="index-page">  <!-- Classe atualizada -->
-    <div class="title">Aposta VIP</div>
-
-    <div class="button-container">
-      <a href="{{ url_for('register') }}">
-        <button type="button">Criar conta</button>
-      </a>
-
-      <a href="{{ url_for('login') }}">
-        <button type="button">Login</button>
-      </a>
+<div class="betting-platform">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Bem-vindo ao Sistema de Apostas</h1>
+                <p class="hero-subtitle">Participe dos melhores eventos esportivos e acompanhe ao vivo!</p>
+                {% if not session.get('user_id') %}
+                    <a class="cta-button" href="{{ url_for('register') }}">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Começar Agora</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
-    <hr class="horizontal-line">
-    <div class="how-it-works">
-      <h2>Como Funciona o ApostaVIP</h2>
-      <p>Bem-vindo ao ApostaVIP, a sua plataforma de apostas online! Aqui, você pode participar de diversos eventos e jogos emocionantes.</p>
-      
-      <h3>Eventos</h3>
-      <p>Participe de eventos ao vivo onde você pode fazer apostas em resultados de competições esportivas e muito mais. Escolha seu evento, faça sua aposta e aguarde os resultados!</p>
+    <!-- Featured Events Section -->
+    <div class="container">
+        <div class="section-header">
+            <h2><i class="fas fa-star"></i> Eventos em Destaque</h2>
+        </div>
+        
+        <div class="events-grid">
+            {% for evento in eventos_populares %}
+            <div class="event-card">
+                <div class="event-header">
+                    <div class="event-category">
+                        {% if 'Futebol' in evento.titulo %}
+                            <i class="fas fa-futbol"></i>
+                        {% elif 'Vôlei' in evento.titulo %}
+                            <i class="fas fa-volleyball-ball"></i>
+                        {% elif 'Corrida' in evento.titulo %}
+                            <i class="fas fa-running"></i>
+                        {% else %}
+                            <i class="fas fa-trophy"></i>
+                        {% endif %}
+                    </div>
+                    <div class="event-odds">R$ {{ '%0.2f'|format(evento.valor_cota) }}</div>
+                </div>
+                
+                <div class="event-body">
+                    <h3 class="event-title">{{ evento.titulo }}</h3>
+                    <p class="event-description">{{ evento.descricao }}</p>
+                    
+                    <div class="event-info">
+                        <div class="info-item">
+                            <i class="fas fa-users"></i>
+                            <span>{{ evento.total_participacoes }} apostadores</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>{{ evento.data_evento.strftime('%d/%m/%Y') }}</span>
+                        </div>
+                    </div>
 
-      <h3>Jogo do Dado</h3>
-      <p>No jogo do dado, você aposta em qual número o dado irá cair. Escolha um número de 1 a 6 e veja se sua previsão se concretiza! Quanto mais apostadores, maior a emoção!</p>
+                    <div class="event-prize">
+                        <div class="prize-label">Prêmio Estimado</div>
+                        <div class="prize-value">R$ {{ '%0.2f'|format(evento.valor_cota * 2) }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
-      <h3>Escolha a Cor</h3>
-      <p>No nosso jogo de escolha de cor, você deve adivinhar se a próxima cor será. Faça sua aposta e veja se você acertou na próxima rodada!</p>
-    </div>
-    <div class="news">
-      <h2>Notícias</h2>
-      <p>Novos eventos de apostas disponíveis esta semana!</p>
-    </div>
-    <ul class="flashes">
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          {% for message in messages %}
-            <li class="{{ message.category }}">{{ message }}</li>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-    </ul>
-  </div> <!-- Fecha a nova div -->
-</body>
+<style>
+:root {
+    --primary: #2C3E50;
+    --secondary: #34495E;
+    --accent: #F1C40F;
+    --success: #27AE60;
+    --text-light: #ECF0F1;
+    --text-dark: #2C3E50;
+    --gradient-start: #1a2a3d;
+    --gradient-end: #2C3E50;
+}
+
+.betting-platform {
+    background-color: #1a1f2e;
+    min-height: 100vh;
+    color: var(--text-light);
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    padding: 6rem 0;
+    margin-bottom: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('path/to/pattern.png') repeat;
+    opacity: 0.1;
+}
+
+.hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-light);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--success);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+    color: white;
+}
+
+.cta-button i {
+    margin-right: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-header h2 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.section-header i {
+    color: var(--accent);
+    margin-right: 0.5rem;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.event-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.event-header {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-category i {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+.event-odds {
+    background: var(--accent);
+    color: var(--text-dark);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+}
+
+.event-body {
+    padding: 1.5rem;
+}
+
+.event-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+}
+
+.event-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.event-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.event-prize {
+    background: rgba(39, 174, 96, 0.1);
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.prize-label {
+    font-size: 0.9rem;
+    color: var(--success);
+    margin-bottom: 0.25rem;
+}
+
+.prize-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--success);
+}
+</style>
 {% endblock %}

@@ -3,35 +3,7 @@
 {% block content %}
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Eventos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Busca todos os botões "Participar" e adiciona o listener
-            document.querySelectorAll(".participate-button").forEach(button => {
-                button.addEventListener("click", function() {
-                    let eventId = this.dataset.eventId;
-                    document.getElementById(`participate-btn-${eventId}`).style.display = "none";
-                    document.getElementById(`confirmation-btns-${eventId}`).style.display = "inline";
-                });
-            });
-
-            // Função de busca de eventos
-            document.getElementById("searchInput").addEventListener("keyup", function() {
-                let input = this.value.toUpperCase();
-                let rows = document.getElementById("eventTable").getElementsByTagName("tr");
-                for (let i = 1; i < rows.length; i++) {
-                    let titleCell = rows[i].getElementsByTagName("td")[0];
-                    if (titleCell) {
-                        let titleText = titleCell.textContent || titleCell.innerText;
-                        rows[i].style.display = titleText.toUpperCase().includes(input) ? "" : "none";
-                    }
-                }
-            });
-        });
-    </script>
 </head>
 <body>
     <div class="container">
@@ -43,39 +15,40 @@
 
         <h1 class="title">Eventos Cadastrados</h1>
 
-        <!-- Campo de busca -->
-        <input type="text" id="searchInput" class="search-bar" placeholder="Buscar eventos por título...">
-
         {% if events %}
             <table id="eventTable" class="event-table">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Título</th>
                         <th>Descrição</th>
                         <th>Valor da Cota</th>
                         <th>Início das Apostas</th>
                         <th>Fim das Apostas</th>
                         <th>Data do Evento</th>
-                        <th>Ações</th>
+                        <th>Participar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for evento in events %}
+                    {% for event in events %}
                     <tr>
-                        <td>{{ evento[1] }}</td>
-                        <td>{{ evento[2] }}</td>
-                        <td>R$ {{ evento[3] }}</td>
-                        <td>{{ evento[4] }}</td>
-                        <td>{{ evento[5] }}</td>
-                        <td>{{ evento[6] }}</td>
+                        <td>{{ event[0] }}</td>
+                        <td>{{ event[1] }}</td>
+                        <td>{{ event[2] }}</td>
+                        <td>R$ {{ "%.2f"|format(event[3]) }}</td>
+                        <td>{{ event[4] }}</td>
+                        <td>{{ event[5] }}</td>
+                        <td>{{ event[6] }}</td>
                         <td>
-                            <form action="{{ url_for('participate_event', event_id=evento[0]) }}" method="POST">
-                                <div id="participate-btn-{{ evento[0] }}">
-                                    <button type="button" class="participate-button" data-event-id="{{ evento[0] }}">Participar</button>
+                            <form action="{{ url_for('participate_event', event_id=event[0]) }}" method="POST">
+                                <div id="participate-btn-{{ event[0] }}">
+                                    <button type="button" class="participate-button" data-event-id="{{ event[0] }}">
+                                        Participar
+                                    </button>
                                 </div>
-                                <div id="confirmation-btns-{{ evento[0] }}" style="display: none;">
-                                    <button type="submit" name="confirmacao" value="sim">Sim</button>
-                                    <button type="submit" name="confirmacao" value="nao">Não</button>
+                                <div id="confirmation-btns-{{ event[0] }}" style="display: none;">
+                                    <button type="submit" name="confirmacao" value="sim" class="confirm-btn">Sim</button>
+                                    <button type="submit" name="confirmacao" value="nao" class="cancel-btn">Não</button>
                                 </div>
                             </form>
                         </td>
@@ -88,14 +61,100 @@
         {% endif %}
     </div>
 
-    <ul class="flashes">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </ul>
+    <style>
+    .container {
+        padding: 20px;
+    }
+    .event-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #1F2937;
+        color: white;
+    }
+    .event-table th,
+    .event-table td {
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #374151;
+    }
+    .event-table th {
+        background: #374151;
+    }
+    .event-table tr:hover {
+        background: #2D3748;
+    }
+    .title {
+        color: white;
+        margin-bottom: 20px;
+    }
+    .back-button {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+    .back-button:hover {
+        background: #059669;
+    }
+    .participate-button {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100px;
+    }
+
+    .participate-button:hover {
+        background: #059669;
+    }
+
+    .confirm-btn {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+
+    .cancel-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .confirm-btn:hover {
+        background: #059669;
+    }
+
+    .cancel-btn:hover {
+        background: #dc2626;
+    }
+    </style>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Adiciona listener para todos os botões "Participar"
+        document.querySelectorAll(".participate-button").forEach(button => {
+            button.addEventListener("click", function() {
+                let eventId = this.dataset.eventId;
+                // Esconde o botão "Participar"
+                document.getElementById(`participate-btn-${eventId}`).style.display = "none";
+                // Mostra os botões de confirmação
+                document.getElementById(`confirmation-btns-${eventId}`).style.display = "inline";
+            });
+        });
+    });
+    </script>
 </body>
 {% endblock %}

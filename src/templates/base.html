@@ -3,23 +3,803 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <title>Aposta VIP</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #13151D;
+            --bg-darker: #0F1923;
+            --primary: #FF4655;
+            --text: #FFFFFF;
+            --text-secondary: #7F8592;
+            --border: #1F2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Header Principal */
+        .main-header {
+            background: var(--bg-darker);
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Área Esquerda do Header */
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .menu-toggle {
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .logo {
+            height: 32px;
+        }
+
+        .logo img {
+            height: 100%;
+        }
+
+        .nav-main {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-item {
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Área Direita do Header */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-profile {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: #1f2937;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            min-width: 180px;
+            display: none;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-item i {
+            font-size: 16px;
+            width: 20px;
+            color: #9ca3af;
+        }
+
+        /* Classe para mostrar o dropdown */
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .username {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .balance {
+            font-weight: 600;
+            color: #ffffff;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+
+        .btn-deposit {
+            background: var(--primary);
+            color: var(--text);
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn-deposit:hover {
+            opacity: 0.9;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 240px;
+            height: calc(100vh - 60px);
+            background: var(--bg-darker);
+            border-right: 1px solid var(--border);
+            padding: 1rem 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav {
+            padding: 0 1rem;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section h3 {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 60px;
+            padding: 2rem;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .nav-main {
+                display: none;
+            }
+        }
+
+        .logo-image {
+            height: 80px !important;
+            width: auto !important;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        /* Ajuste o header se necessário para comportar o logo maior */
+        .main-header {
+            padding: 0.5rem 1rem;
+            min-height: 90px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            padding-left: 5px;
+        }
+
+        @keyframes highlight {
+            0% { color: var(--text); }
+            50% { color: #4CAF50; }
+            100% { color: var(--text); }
+        }
+
+        .balance.updated {
+            animation: highlight 1s ease;
+        }
+
+        .wallet-info {
+            padding: 12px 16px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1f2937;
+        }
+
+        .wallet-info i {
+            color: #10b981;
+        }
+
+        .wallet-info span {
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #374151;
+            margin: 0;
+        }
+
+        .dropdown-menu {
+            min-width: 200px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dropdown-menu a {
+            padding: 12px 16px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background: #374151;
+        }
+
+        .dropdown-menu i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            min-width: 200px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .wallet-info {
+            padding: 12px 16px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1f2937;
+        }
+
+        .wallet-info i {
+            color: #10b981;
+        }
+
+        .wallet-info span {
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #374151;
+            margin: 0;
+        }
+
+        .dropdown-menu a {
+            padding: 12px 16px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background: #374151;
+        }
+
+        .dropdown-menu i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #1f2937;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            border: 1px solid #374151;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a, .wallet-item {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wallet-item {
+            border-bottom: 1px solid #374151;
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .wallet-item i {
+            color: #10b981;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #374151;
+        }
+
+        .dropdown-content i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .wallet-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #2d3748;
+            border-radius: 6px;
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .wallet-display i {
+            color: #10b981;
+        }
+
+        .wallet-display span {
+            color: white;
+        }
+
+        /* Ajuste o espaçamento entre os elementos */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .navbar {
+            background-color: #1f2937;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand a {
+            color: white;
+            font-size: 1.5rem;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+
+        .nav-links a:hover {
+            background-color: #374151;
+        }
+
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .dropdown-btn:hover {
+            background-color: #374151;
+            border-radius: 0.375rem;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #1f2937;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            border: 1px solid #374151;
+            z-index: 1000;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .wallet-item {
+            padding: 0.75rem 1rem;
+            color: #10b981;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .wallet-item i {
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-content a i {
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #374151;
+        }
+
+        /* Último item do dropdown com bordas arredondadas */
+        .dropdown-content a:last-child {
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        .wallet-display {
+            color: #10b981 !important;
+            font-weight: 500;
+            cursor: default !important;
+        }
+
+        .wallet-display:hover {
+            background-color: transparent !important;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #374151;
+            margin: 4px 0;
+        }
+
+        .game-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .game-link i {
+            font-size: 1.2em;
+            color: #ffffff; /* Branco */
+        }
+
+        .game-link:hover i {
+            transform: rotate(360deg);
+            transition: transform 0.5s ease;
+        }
+
+        .dice-icon,
+        .event-icon {
+            font-size: 1.2em;
+            color: #ffffff !important;
+        }
+
+        .game-link:hover .dice-icon,
+        .game-link:hover .event-icon {
+            transform: rotate(360deg);
+            transition: transform 0.5s ease;
+        }
+        </style>
 </head>
-<ul class="flashes">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <li class="{{ message.category }}">{{ message }}</li>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </ul>
 <body>
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
+    <!-- Header Principal -->
+    <header class="main-header">
+        <div class="header-left">
+            <i class="fas fa-bars menu-toggle"></i>
+            <div class="logo">
+                <a href="{{ url_for('home') }}" class="logo-link">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo-image">
+                    <span class="logo-text">Aposta VIP</span>
+                </a>
+            </div>
+            <nav class="nav-main">
+                <a href="{{ url_for('jogo') }}" class="nav-item {% if request.endpoint == 'jogo' %}active{% endif %}">
+                    <i class="fas fa-trophy"></i> CASSINO
+                </a>
+                <a href="{{ url_for('listar_eventos') }}" class="nav-item {% if request.endpoint == 'listar_eventos' %}active{% endif %}">
+                    <i class="fas fa-futbol"></i> EVENTOS
+                </a>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            {% if session.get('user_id') %}
+                <div class="user-info">
+                    <div class="user-profile">
+                        <div class="profile-trigger" onclick="toggleDropdown()">
+                            <i class="fas fa-user-circle"></i>
+                            <span class="username">{{ session.get('username', 'Usuário') }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <a href="{{ url_for('wallet') }}" class="dropdown-item">
+                                <i class="fas fa-wallet"></i>
+                                Carteira
+                            </a>
+                            <a href="{{ url_for('user_profile') }}" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                Ver Perfil
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Sair
+                            </a>
+                        </div>
+                    </div>
+                    <span class="balance" id="userBalance">R$ {{ "%.2f"|format(session.get('wallet', 0)) }}</span>
+                </div>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-deposit">Entrar</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-nav">
+            {% if not session.get('user_id') %}
+                
+            {% endif %}
+
+            <div class="sidebar-section">
+                <h3>JOGOS POPULARES</h3>
+                <a href="{{ url_for('jogo') }}" class="game-link">
+                    <i class="fas fa-dice dice-icon"></i>
+                    Dados
+                </a>
+                <a href="{{ url_for('create_bet') }}" class="game-link">
+                    <i class="fas fa-bullhorn event-icon"></i>
+                    Criar Evento
+                </a>
+                <a href="{{ url_for('create_bet') }}" class="game-link">
+                    <i class="fas fa-palette"></i>
+                    <span>Cores VIP</span>
+                </a>
+                <a href="{{ url_for('listar_eventos') }}" class="game-link">
+                    <i class="fas fa-calendar-plus event-icon"></i>
+                    <span>Eventos</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // Toggle Sidebar
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        function atualizarSaldo() {
+            fetch('/get_saldo')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Resposta:', data); // Debug
+                    if (data.saldo !== undefined) {
+                        document.getElementById('userBalance').textContent = 
+                            `R$ ${parseFloat(data.saldo).toFixed(2)}`;
+                    }
+                })
+                .catch(err => console.error('Erro:', err));
+        }
+
+        // Atualiza a cada 2 segundos
+        setInterval(atualizarSaldo, 2000);
+
+        // Atualiza quando a página carrega
+        document.addEventListener('DOMContentLoaded', atualizarSaldo);
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+            
+            // Fecha o dropdown quando clicar fora dele
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.user-profile')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

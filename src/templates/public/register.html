@@ -1,39 +1,218 @@
 {% extends "base.html" %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
-<h1>Criar Conta</h1>
+<div class="register-container">
+    <div class="register-box">
+        <div class="register-header">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <h2>Criar Conta</h2>
+        </div>
 
-<form method="POST" action="{{ url_for('register') }}">
-    <label for="username">Nome de Usuário:</label>
-    <input type="text" id="username" name="username" required>
+        <form method="POST" action="{{ url_for('register') }}" class="register-form">
+            <div class="form-group">
+                <label for="name">Nome</label>
+                <input type="text" id="name" name="name" required 
+                       placeholder="Seu nome completo">
+            </div>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required 
+                       placeholder="Seu melhor email">
+            </div>
 
-    <label for="password">Senha:</label>
-    <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="birthdate">Data de Nascimento</label>
+                <input type="date" id="birthdate" name="birthdate" required>
+            </div>
 
-    <label for="birthdate">Data de Nascimento:</label>
-    <input type="date" id="birthdate" name="birthdate" required>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Crie uma senha forte">
+            </div>
 
-    <button type="submit">Criar Conta</button>
-</form>
+            <div class="form-group">
+                <label for="confirm_password">Confirmar Senha</label>
+                <input type="password" id="confirm_password" name="confirm_password" required 
+                       placeholder="Confirme sua senha">
+            </div>
 
-<a href="{{ url_for('login') }}">
-    <button type="button">Voltar ao Login</button>
-</a>
+            <button type="submit" class="register-button">Criar Conta</button>
 
-<a href="{{ url_for('ola_controller') }}">
-  <button type="button">Voltar para a Tela Inicial</button>
-</a>
-<ul class="flashes">
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for message in messages %}
-        <li class="{{ message.category }}">{{ message }}</li>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-</ul>
+            <div class="form-footer">
+                <p>Já tem uma conta? 
+                    <a href="{{ url_for('login') }}" class="login-link">
+                        Faça login
+                    </a>
+                </p>
+            </div>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<style>
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1c2c 0%, #2d3748 100%);
+    padding: 20px;
+}
+
+.register-box {
+    background: #1F2937;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+label {
+    color: #E5E7EB;
+    font-size: 0.9rem;
+}
+
+input {
+    padding: 0.75rem;
+    border: 1px solid #4B5563;
+    border-radius: 6px;
+    background: #374151;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #DC2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+}
+
+input::placeholder {
+    color: #9CA3AF;
+}
+
+.register-button {
+    background: #DC2626;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.register-button:hover {
+    background: #B91C1C;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.form-footer p {
+    color: #E5E7EB;
+    font-size: 0.9rem;
+}
+
+.login-link {
+    color: #DC2626;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.login-link:hover {
+    color: #B91C1C;
+}
+
+.alert {
+    background: #DC2626;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    .register-box {
+        padding: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    input, .register-button {
+        padding: 0.6rem;
+    }
+}
+
+/* Estilo para o input de data */
+input[type="date"] {
+    padding: 0.75rem;
+    border: 1px solid #4B5563;
+    border-radius: 6px;
+    background: #374151;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Torna o ícone do calendário branco */
+    cursor: pointer;
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: #DC2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+}
+</style>
 {% endblock %}

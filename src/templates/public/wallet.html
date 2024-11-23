@@ -1,38 +1,95 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Minha Wallet</h1>
-<p>Valor disponível: R$ {{ wallet|float }}</p>
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<div>
-    <a href="{{ url_for('home') }}">
-        <button type="button">Voltar para Home</button>
-    </a>
+<div class="wallet-container">
+    <h2>Minha Carteira</h2>
+    
+    <div class="wallet-balance">
+        <i class="fas fa-wallet"></i>
+        <span>Saldo: R$ {{ "%.2f"|format(session.get('wallet', 0)|float) }}</span>
+    </div>
+    
+    <div class="wallet-actions">
+        <a href="{{ url_for('deposito') }}" class="action-button deposit">
+            <i class="fas fa-plus-circle"></i>
+            Depositar
+        </a>
+        <a href="{{ url_for('sacar') }}" class="action-button withdraw">
+            <i class="fas fa-minus-circle"></i>
+            Sacar
+        </a>
+    </div>
 </div>
 
-{% if session.get('user_id') %}
-    <a href="{{ url_for('deposito', user_id=session['user_id']) }}">
-        <button type="button">Depositar</button>
-    </a>
-{% else %}
-    <p>Por favor, faça login para acessar sua wallet.</p>
-{% endif %}
+<style>
+.wallet-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-{% if session.get('user_id') %}
-    
-    <a href="{{ url_for('sacar', user_id=session['user_id']) }}">
-        <button type="button">Sacar</button>
-    </a>
-{% else %}
-    <p>Por favor, faça login para acessar sua wallet.</p>
-{% endif %}
-<ul class="flashes">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <li class="{{ message.category }}">{{ message }}</li>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </ul>
+.wallet-container h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.wallet-balance {
+    background: #1f2937;
+    padding: 25px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.wallet-balance i {
+    color: #10b981;
+    font-size: 28px;
+}
+
+.wallet-balance span {
+    font-size: 24px;
+    font-weight: 500;
+    color: white;
+}
+
+.wallet-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.action-button.deposit {
+    background: #10b981;
+    color: white;
+}
+
+.action-button.withdraw {
+    background: #ef4444;
+    color: white;
+}
+
+.action-button i {
+    font-size: 20px;
+}
+</style>
 {% endblock %}

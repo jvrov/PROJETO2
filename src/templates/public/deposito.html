@@ -1,43 +1,245 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Depósito</h1>
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<div class="transaction-container">
+    <div class="transaction-card">
+        <div class="card-header">
+            <i class="fas fa-plus-circle"></i>
+            <h2>Depositar Créditos</h2>
+        </div>
 
-<form method="POST" action="{{ url_for('deposito', user_id=user_id) }}">
-    <!-- Campo de valor para o depósito -->
-    <label for="deposit_amount">Valor a Depositar:</label>
-    <input type="number" name="deposit_amount" step="0.01" min="1" required><br><br>
+        <div class="current-balance">
+            <span>Saldo Atual:</span>
+            <span class="balance">R$ {{ "%.2f"|format(session.get('wallet', 0)|float) }}</span>
+        </div>
 
-    <!-- Campos de informações do cartão de crédito -->
-    <h2>Informações do Cartão de Crédito</h2>
-    <label for="card_number">Número do Cartão:</label>
-    <input type="text" name="card_number" pattern="\d{16}" maxlength="16" placeholder="0000 0000 0000 0000" required><br><br>
+        <form method="POST" action="{{ url_for('deposito') }}" class="transaction-form" id="paymentForm">
+            <div class="form-group">
+                <label for="valor">Valor do Depósito</label>
+                <div class="input-with-icon">
+                    <span class="currency">R$</span>
+                    <input type="number" id="valor" name="valor" step="0.01" min="10.00" required>
+                </div>
+                <small class="input-hint">Mínimo: R$ 10,00</small>
+            </div>
 
-    <label for="card_expiry">Data de Validade (MM/AA):</label>
-    <input type="text" name="card_expiry" pattern="\d{2}/\d{2}" placeholder="MM/AA" required><br><br>
+            <div class="payment-details">
+                <h3>Dados do Cartão</h3>
+                
+                <div class="form-group">
+                    <label for="card_number">Número do Cartão</label>
+                    <input type="text" id="card_number" name="card_number" maxlength="19" placeholder="0000 0000 0000 0000" required>
+                </div>
 
-    <label for="card_cvc">CVC:</label>
-    <input type="text" name="card_cvc" pattern="\d{3}" maxlength="3" placeholder="000" required><br><br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="card_expiry">Validade</label>
+                        <input type="text" id="card_expiry" name="card_expiry" maxlength="5" placeholder="MM/AA" required>
+                    </div>
 
-    <button type="submit">Confirmar Depósito</button>
-</form>
+                    <div class="form-group">
+                        <label for="card_cvv">CVV</label>
+                        <input type="text" id="card_cvv" name="card_cvv" maxlength="3" placeholder="123" required>
+                    </div>
+                </div>
 
-<!-- Botão para voltar à página inicial -->
-<div>
-    <a href="{{ url_for('home') }}">
-        <button type="button">Voltar para Home</button>
-    </a>
+                <div class="form-group">
+                    <label for="card_name">Nome no Cartão</label>
+                    <input type="text" id="card_name" name="card_name" placeholder="Como está no cartão" required>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn deposit">
+                <i class="fas fa-check"></i>
+                Confirmar Pagamento
+            </button>
+        </form>
+    </div>
 </div>
 
-<!-- Mensagens de feedback -->
-<ul class="flashes">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <li class="{{ message.category }}">{{ message }}</li>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-</ul>
+<style>
+.transaction-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.transaction-card {
+    background: #1f2937;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.card-header i {
+    font-size: 28px;
+    color: #10b981;
+}
+
+.card-header h2 {
+    color: white;
+    font-size: 24px;
+    margin: 0;
+}
+
+.current-balance {
+    background: #374151;
+    padding: 15px 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.current-balance span {
+    color: #9ca3af;
+}
+
+.current-balance .balance {
+    color: #10b981;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.transaction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon .currency {
+    position: absolute;
+    left: 15px;
+    color: #9ca3af;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #374151;
+    background: #374151;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+}
+
+.input-hint {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.payment-details {
+    background: #2d3748;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.payment-details h3 {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #374151;
+    background: #374151;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #10b981;
+}
+
+.submit-btn {
+    margin-top: 20px;
+    padding: 15px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: opacity 0.2s;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+.submit-btn.deposit {
+    background: #10b981;
+}
+
+.submit-btn i {
+    font-size: 18px;
+}
+</style>
+
+<script>
+document.getElementById('card_number').addEventListener('input', function (e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+    e.target.value = value;
+});
+
+document.getElementById('card_expiry').addEventListener('input', function (e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.slice(0,2) + '/' + value.slice(2,4);
+    }
+    e.target.value = value;
+});
+
+document.getElementById('card_cvv').addEventListener('input', function (e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+});
+
+document.getElementById('paymentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Aqui você pode adicionar validações adicionais
+    // Por enquanto, vamos apenas simular o pagamento
+    this.submit();
+});
+</script>
 {% endblock %}

@@ -1,66 +1,344 @@
 {% extends "base.html" %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 <div class="home-container">
-    <div class="welcome-section">
-        <h1>Bem-vindo à Aposta VIP!</h1>
-        
-        {% if session.get('username') %}
-            <h2>Bem vindo a Aposta VIP {{ session['username'] }}!</h2>
-        {% else %}
-            <h2>Olá, Usuário!</h2>
-        {% endif %}
-        
-    </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Bem-vindo ao Aposta VIP</h1>
+            <p>A melhor plataforma de apostas online</p>
+            
+            {% if not session.get('user_id') %}
+                <div class="hero-buttons">
+                    <a href="{{ url_for('register') }}" class="btn-primary">
+                        <i class="fas fa-gift"></i> Cadastre-se e se divirta
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn-secondary">
+                        <i class="fas fa-sign-in-alt"></i> Já tenho conta
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
 
-    <div class="actions-section">
-        <a href="{{ url_for('create_bet') }}" class="btn">
-            <button type="button" class="action-btn">Criar Evento</button>
-        </a>
+    <!-- Games Section -->
+    <section class="games-section">
+        <h2>Jogos em Destaque</h2>
+        <div class="games-grid">
+            <!-- Dados VIP -->
+            <a href="{{ url_for('jogo') }}" class="game-card">
+                <div class="game-header">
+                    <i class="fas fa-dice"></i>
+                    <span class="multiplier">5x</span>
+                </div>
+                <div class="game-info">
+                    <h3>Dados VIP</h3>
+                    <p>Aposte nos números e multiplique seus ganhos</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-chart-line"></i> {{ dados_apostas|default(0) }} apostas</span>
+                    </div>
+                </div>
+            </a>
 
-        <a href="{{ url_for('listar_eventos') }}" class="btn">
-            <button type="button" class="action-btn">Listar Eventos</button>
-        </a>
+            <!-- Cores VIP -->
+            <a href="{{ url_for('jogo_cor') }}" class="game-card">
+                <div class="game-header">
+                    <i class="fas fa-palette"></i>
+                    <span class="multiplier">14x</span>
+                </div>
+                <div class="game-info">
+                    <h3>Cores VIP</h3>
+                    <p>Verde, Vermelho ou Preto? Faça sua escolha!</p>
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-value">{{ total_apostas_cores if total_apostas_cores is not none else 0 }}</span>
+                            <span class="stat-label">Apostas</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
 
-        {% if session.get('user_id') %}
-        <a href="{{ url_for('wallet', user_id=session['user_id']) }}" class="btn">
-            <button type="button" class="action-btn">Minha Wallet</button>
-        </a>
-        
-        <!-- Botão para o perfil do usuário -->
-        <a href="{{ url_for('user_profile') }}" class="btn">
-            <button type="button" class="action-btn">Meu Perfil</button>
-        </a>
-        {% else %}
-        <p class="info-text">Por favor, faça login para acessar sua wallet e perfil.</p>
-        {% endif %}
-
-        <a href="{{ url_for('meus_eventos') }}" class="btn">
-            <button type="button" class="action-btn">Meus Eventos</button>
-        </a>
-
-        <a href="{{ url_for('jogo') }}" class="btn">
-            <button type="button" class="action-btn">Dados</button>
-        </a>
-
-        <a href="{{ url_for('jogo_cor') }}" class="btn">
-            <button type="button" class="action-btn">Jogo da Cor</button>
-        </a>
-
-        <a href="{{ url_for('logout') }}" class="btn">
-            <button type="button" class="logout-btn">Logout</button>
-        </a>
-    </div>
+            <!-- Apostas Esportivas -->
+            <a href="{{ url_for('listar_eventos') }}" class="game-card">
+                <div class="game-header">
+                    <i class="fas fa-futbol"></i>
+                    <span class="live">Ao Vivo</span>
+                </div>
+                <div class="game-info">
+                    <h3>Apostas Esportivas</h3>
+                    <p>Aposte nos principais eventos esportivos</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-calendar"></i> {{ eventos_ativos|default(0) }} eventos</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </section>
 </div>
 
-<ul class="flashes">
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            <li class="{{ message.category }}">{{ message }}</li>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
-</ul>
+<style>
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #24243e 0%, #302b63 100%);
+    border-radius: 15px;
+    padding: 60px 40px;
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.hero h1 {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 1.2em;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+.btn-primary {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+}
+
+/* Games Section */
+.games-section {
+    margin-bottom: 40px;
+}
+
+.games-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+    text-align: center;
+    color: white;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.game-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    transition: transform 0.3s;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+}
+
+.game-header {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.game-header i {
+    font-size: 2.5em;
+    color: #ffd700;
+}
+
+.multiplier, .live {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.multiplier {
+    background: #4CAF50;
+    color: white;
+}
+
+.live {
+    background: #f44336;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.game-info {
+    padding: 20px;
+}
+
+.game-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.3em;
+}
+
+.game-info p {
+    opacity: 0.8;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+.game-stats span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 40px 20px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    color: #e5e7eb;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 5px 0;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.menu-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-right: 12px;
+}
+
+.menu-icon i {
+    font-size: 1.2em;
+    color: #e5e7eb;
+}
+
+/* Ícones específicos */
+.fa-dice {
+    color: #ffffff !important;
+}
+
+.fa-calendar-plus {
+    color: #3b82f6 !important; /* Azul */
+}
+
+/* Efeito hover nos ícones */
+.menu-item:hover .menu-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.menu-item:hover i {
+    transform: scale(1.1);
+}
+
+/* Animação suave */
+.menu-icon i {
+    transition: transform 0.3s ease;
+}
+
+/* Mantendo o efeito hover */
+.game-link:hover .fa-dice {
+    transform: rotate(360deg);
+    transition: transform 0.5s ease;
+}
+
+/* Ajustando a cor dos ícones para branco */
+.fa-dice,
+.fa-calendar-plus {
+    color: #ffffff !important;
+}
+
+/* Mantendo o efeito hover */
+.game-link:hover .fa-dice,
+.game-link:hover .fa-calendar-plus {
+    transform: rotate(360deg);
+    transition: transform 0.5s ease;
+}
+
+/* Abordagem mais específica */
+.game-card .game-link .fa-dice,
+.game-card .game-link .fa-calendar-plus,
+.game-link .fa-dice,
+.game-link .fa-calendar-plus,
+i.fa-dice,
+i.fa-calendar-plus {
+    color: #ffffff !important;
+}
+</style>
+
+<!-- Para debug -->
+<div style="display:none;">
+    Debug: 
+    Dados: {{ dados_apostas }}
+    Cores: {{ cores_apostas }}
+    Eventos: {{ eventos_ativos }}
+</div>
 {% endblock %}

@@ -541,6 +541,106 @@ th {
   margin-top: 20px; /* Margem acima do container de botões */
 }
 
+.user-dropdown {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    min-width: 200px;
+}
+
+.user-dropdown:hover, .user-dropdown:focus {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-left: 10px;
+}
+
+.username {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.balance {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.dropdown-menu {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 5px !important;
+    padding: 8px;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    border-radius: 6px;
+    padding: 8px 16px;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #fff5f5;
+}
+
+@media (max-width: 768px) {
+    .user-info {
+        display: none;
+    }
+    
+    .user-dropdown {
+        padding: 0.5rem;
+        min-width: auto;
+    }
+}
+
+.logo img {
+    height: 80px;  /* Aumentei para 80px - ajuste este valor conforme necessário */
+    width: auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;  /* Espaço entre a imagem e o texto */
+    text-decoration: none;
+}
+
+/* Ajustando o texto ao lado do logo, se necessário */
+.logo span {
+    font-size: 1.4rem;  /* Aumentei um pouco o tamanho da fonte também */
+    font-weight: bold;
+    color: var(--text);
+}
+
+@keyframes highlight {
+    0% { color: var(--text); }
+    50% { color: #4CAF50; }
+    100% { color: var(--text); }
+}
+
+.balance.updated {
+    animation: highlight 1s ease;
+}
+
 
 
 

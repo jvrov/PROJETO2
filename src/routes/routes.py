@@ -1,7 +1,7 @@
 from flask import Flask
 from flask.views import MethodView
-from src.controllers.controller import OlaController, RegisterController, LoginController, HomeController,CreateBetController, ListEventsController,WalletController
-from flask_sqlalchemy import SQLAlchemy
+from src.controllers.controller import OlaController, RegisterController, LoginController, HomeController,CreateBetController, ListEventsController,WalletController, ModeratorDashboardController
+from flask_sqlalchemy import SQLAlchemy # type: ignore
 import os
 
 
@@ -18,6 +18,7 @@ app.add_url_rule('/home', view_func=HomeController.as_view('home'))
 app.add_url_rule('/create_bet', view_func=CreateBetController.as_view('create_bet'))
 app.add_url_rule('/listar_eventos', view_func=ListEventsController.as_view('listar_eventos'))
 app.add_url_rule('/', view_func=OlaController.as_view('ola_controller'))
+app.add_url_rule('/moderator_dashboard', view_func=ModeratorDashboardController.as_view('moderator_dashboard'))
 
 
 if __name__ == '__main__':

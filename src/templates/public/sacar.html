@@ -1,119 +1,344 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Realizar Saque</h1>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
-    <!-- Exibe o valor sacado caso exista -->
-    {% if withdraw_amount %}
-        <p>Valor do saque: R$ {{ withdraw_amount }}</p>
-    {% endif %}
-
-    <!-- Exibe o valor recebido após a taxa -->
-    {% if amount_received is not none %}
-        <p>Valor que você receberá: R$ {{ amount_received }}</p>
-    {% endif %}
-
-    <!-- Tabela de Taxas -->
-    <h2>Tabela de Taxas de Saque</h2>
-    <table>
-        <tr>
-            <th>Valor do Saque</th>
-            <th>Taxa Aplicada</th>
-        </tr>
-        <tr>
-            <td>Até R$ 100</td>
-            <td>4%</td>
-        </tr>
-        <tr>
-            <td>De R$ 101 a R$ 1000</td>
-            <td>3%</td>
-        </tr>
-        <tr>
-            <td>De R$ 1001 a R$ 5000</td>
-            <td>2%</td>
-        </tr>
-        <tr>
-            <td>De R$ 5001 a R$ 100.000</td>
-            <td>1%</td>
-        </tr>
-        <tr>
-            <td>Acima de R$ 101.000</td>
-            <td>Isento de taxa</td>
-        </tr>
-    </table>
-
-    <!-- Formulário de Saque -->
-    <form method="POST" action="{{ url_for('sacar', user_id=user_id) }}">
-        <label for="withdraw_amount">Valor do Saque:</label>
-        <input type="number" id="withdraw_amount" name="withdraw_amount" min="1" step="0.01" required><br><br>
-
-        <!-- Método de Saque -->
-        <label for="withdraw_method">Escolha o Método de Saque:</label><br>
-        <input type="radio" id="conta_corrente" name="withdraw_method" value="conta_corrente" required>
-        <label for="conta_corrente">Conta Corrente</label><br>
-        <input type="radio" id="pix" name="withdraw_method" value="pix" required>
-        <label for="pix">PIX</label><br><br>
-
-        <!-- Campos adicionais dependendo do método -->
-        <div id="conta_corrente_fields" style="display: none;">
-            <label for="bank_name">Banco:</label>
-            <input type="text" id="bank_name" name="bank_name"><br><br>
-            <label for="agency_number">Agência:</label>
-            <input type="text" id="agency_number" name="agency_number"><br><br>
-            <label for="account_number">Número da Conta:</label>
-            <input type="text" id="account_number" name="account_number"><br><br>
+<div class="withdraw-container">
+    <div class="withdraw-header">
+        <div class="balance-card">
+            <div class="balance-info">
+                <h1>Saldo Disponível</h1>
+                <p class="balance-value">R$ {{ "%.2f"|format(saldo) }}</p>
+            </div>
+            <i class="fas fa-wallet wallet-icon"></i>
         </div>
-        
-        <div id="pix_field" style="display: none;">
-            <label for="pix_key">Chave PIX:</label>
-            <input type="text" id="pix_key" name="pix_key"><br><br>
-        </div>
-
-        <button type="submit">Confirmar Saque</button>
-    </form>
-
-    <!-- Botões para voltar -->
-    <div>
-        <a href="{{ url_for('home') }}">
-            <button type="button">Voltar para Home</button>
-        </a>
-        <a href="{{ url_for('wallet', user_id=session['user_id']) }}">
-            <button type="button">Minha Wallet</button>
-        </a>
     </div>
 
-    <!-- Mensagens de feedback -->
-    <ul class="flashes">
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <li class="{{ message.category }}">{{ message }}</li>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-    </ul>
+    <div class="withdraw-content">
+        <div class="withdraw-section">
+            <div class="section-header">
+                <h2>Realizar Saque</h2>
+                <p>Escolha como deseja receber seu dinheiro</p>
+            </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const contaCorrenteFields = document.getElementById('conta_corrente_fields');
-            const pixField = document.getElementById('pix_field');
-            const contaCorrenteRadio = document.getElementById('conta_corrente');
-            const pixRadio = document.getElementById('pix');
+            <form method="POST" class="withdraw-form">
+                <div class="form-group">
+                    <label for="valor">Valor do Saque</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                        <input type="number" id="valor" name="valor" step="0.01" required min="0" max="101000"
+                               placeholder="Digite o valor">
+                    </div>
+                </div>
 
-            contaCorrenteRadio.addEventListener('change', function() {
-                if (contaCorrenteRadio.checked) {
-                    contaCorrenteFields.style.display = 'block';
-                    pixField.style.display = 'none';
-                }
-            });
+                <div class="form-group">
+                    <label for="tipo_recebimento">Método de Recebimento</label>
+                    <div class="payment-method-selector">
+                        <div class="method-option">
+                            <input type="radio" id="pix" name="tipo_recebimento" value="pix" checked>
+                            <label for="pix">
+                                <i class="fas fa-qrcode"></i>
+                                PIX
+                            </label>
+                        </div>
+                        <div class="method-option">
+                            <input type="radio" id="conta" name="tipo_recebimento" value="conta">
+                            <label for="conta">
+                                <i class="fas fa-university"></i>
+                                Conta Bancária
+                            </label>
+                        </div>
+                    </div>
+                </div>
 
-            pixRadio.addEventListener('change', function() {
-                if (pixRadio.checked) {
-                    pixField.style.display = 'block';
-                    contaCorrenteFields.style.display = 'none';
-                }
-            });
-        });
-    </script>
+                <div id="pix_fields" class="form-group payment-details">
+                    <label for="chave_pix">Chave PIX</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-key"></i>
+                        <input type="text" id="chave_pix" name="chave_pix" 
+                               placeholder="Digite sua chave PIX">
+                    </div>
+                </div>
+
+                <div id="conta_fields" class="form-group payment-details" style="display: none;">
+                    <div class="bank-fields">
+                        <div class="form-group">
+                            <label for="banco">Banco</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-university"></i>
+                                <input type="text" id="banco" name="banco" 
+                                       placeholder="Nome do Banco">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="agencia">Agência</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-building"></i>
+                                <input type="text" id="agencia" name="agencia" 
+                                       placeholder="Número da Agência">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="conta">Conta</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-credit-card"></i>
+                                <input type="text" id="conta" name="conta" 
+                                       placeholder="Número da Conta">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="withdraw-button">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Solicitar Saque
+                </button>
+            </form>
+        </div>
+
+        <div class="fees-section">
+            <div class="section-header">
+                <h2>Taxas de Saque</h2>
+                <p>Confira as taxas aplicadas para cada faixa de valor</p>
+            </div>
+
+            <div class="fees-table">
+                <div class="fee-row">
+                    <span class="fee-range">Até R$ 100,00</span>
+                    <span class="fee-value">4%</span>
+                </div>
+                <div class="fee-row">
+                    <span class="fee-range">R$ 101,00 a R$ 1.000,00</span>
+                    <span class="fee-value">3%</span>
+                </div>
+                <div class="fee-row">
+                    <span class="fee-range">R$ 1.001,00 a R$ 5.000,00</span>
+                    <span class="fee-value">2%</span>
+                </div>
+                <div class="fee-row">
+                    <span class="fee-range">R$ 5.001,00 a R$ 100.000,00</span>
+                    <span class="fee-value">1%</span>
+                </div>
+                <div class="fee-row">
+                    <span class="fee-range">Acima de R$ 101.000,00</span>
+                    <span class="fee-value">Isento</span>
+                </div>
+            </div>
+
+            <div class="fee-note">
+                <i class="fas fa-info-circle"></i>
+                Limite máximo de saque por dia: R$ 101.000,00
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.withdraw-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.withdraw-header {
+    margin-bottom: 2rem;
+}
+
+.balance-card {
+    background: linear-gradient(135deg, #1a1c2c 0%, #2d3748 100%);
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.balance-info h1 {
+    color: #9ca3af;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.balance-value {
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.wallet-icon {
+    font-size: 3rem;
+    color: #DC2626;
+}
+
+.withdraw-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+}
+
+.withdraw-section, .fees-section {
+    background: #1F2937;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.section-header h2 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-header p {
+    color: #9ca3af;
+}
+
+.payment-method-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.method-option {
+    position: relative;
+}
+
+.method-option input[type="radio"] {
+    display: none;
+}
+
+.method-option label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #374151;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.method-option input[type="radio"]:checked + label {
+    background: #DC2626;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.input-with-icon input {
+    padding-left: 2.5rem;
+    width: 100%;
+    background: #374151;
+    border: 1px solid #4B5563;
+    border-radius: 8px;
+    color: #ffffff;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+}
+
+.bank-fields {
+    display: grid;
+    gap: 1rem;
+}
+
+.withdraw-button {
+    width: 100%;
+    background: #DC2626;
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 1.5rem;
+}
+
+.withdraw-button:hover {
+    background: #B91C1C;
+}
+
+.fees-table {
+    background: #374151;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.fee-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #4B5563;
+}
+
+.fee-row:last-child {
+    border-bottom: none;
+}
+
+.fee-range {
+    color: #E5E7EB;
+}
+
+.fee-value {
+    color: #DC2626;
+    font-weight: 500;
+}
+
+.fee-note {
+    margin-top: 1rem;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .withdraw-content {
+        grid-template-columns: 1fr;
+    }
+
+    .balance-value {
+        font-size: 2rem;
+    }
+
+    .wallet-icon {
+        font-size: 2.5rem;
+    }
+}
+</style>
+
+<script>
+document.querySelectorAll('input[name="tipo_recebimento"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const pixFields = document.getElementById('pix_fields');
+        const contaFields = document.getElementById('conta_fields');
+        
+        if (this.value === 'pix') {
+            pixFields.style.display = 'block';
+            contaFields.style.display = 'none';
+        } else {
+            pixFields.style.display = 'none';
+            contaFields.style.display = 'block';
+        }
+    });
+});
+</script>
 {% endblock %}

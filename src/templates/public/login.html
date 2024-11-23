@@ -1,35 +1,179 @@
 {% extends "base.html" %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-<h1>Login</h1>
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <h2>Login</h2>
+        </div>
 
-<form method="POST" action="{{ url_for('login') }}">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+        <form method="POST" action="{{ url_for('login') }}" class="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required 
+                       placeholder="Seu email">
+            </div>
 
-    <label for="password">Senha:</label>
-    <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Sua senha">
+            </div>
 
-    <button type="submit">Entrar</button>
-</form>
+            <button type="submit" class="login-button">Entrar</button>
 
-<!-- Botão Criar Conta -->
-<a href="{{ url_for('register') }}">
-    <button type="button">Criar uma Conta</button>
-</a>
+            <div class="form-footer">
+                <p>Não tem uma conta? 
+                    <a href="{{ url_for('register') }}" class="register-link">
+                        Registre-se
+                    </a>
+                </p>
+            </div>
+        </form>
 
-<!-- Botão Voltar para a Tela Inicial -->
-<a href="{{ url_for('ola_controller') }}">
-    <button type="button">Voltar para a Tela Inicial</button>
-</a>
-<ul class="flashes">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <li class="{{ message.category }}">{{ message }}</li>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </ul>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<style>
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1c2c 0%, #2d3748 100%);
+    padding: 20px;
+}
+
+.login-box {
+    background: #1F2937;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+label {
+    color: #E5E7EB;
+    font-size: 0.9rem;
+}
+
+input {
+    padding: 0.75rem;
+    border: 1px solid #4B5563;
+    border-radius: 6px;
+    background: #374151;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #10B981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+input::placeholder {
+    color: #9CA3AF;
+}
+
+.login-button {
+    background: #DC2626;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-button:hover {
+    background: #B91C1C;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.form-footer p {
+    color: #E5E7EB;
+    font-size: 0.9rem;
+}
+
+.register-link {
+    color: #DC2626;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.register-link:hover {
+    color: #B91C1C;
+}
+
+.alert {
+    background: #DC2626;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        padding: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    input, .login-button {
+        padding: 0.6rem;
+    }
+}
+</style>
 {% endblock %}

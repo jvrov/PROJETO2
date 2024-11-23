@@ -1,0 +1,244 @@
+/* Estilos gerais */
+.game-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Área do Saldo */
+.saldo-container {
+    margin-bottom: 30px;
+}
+
+.saldo-card {
+    background: linear-gradient(135deg, #1a237e, #0d47a1);
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.saldo-card i {
+    font-size: 2em;
+    color: #64b5f6;
+}
+
+.saldo-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.saldo-label {
+    color: #90caf9;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.saldo-valor {
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Área de Apostas */
+.betting-area {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: #90caf9;
+    font-size: 1.1em;
+}
+
+.input-group label i {
+    margin-right: 8px;
+}
+
+.value-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency {
+    position: absolute;
+    left: 15px;
+    color: #64b5f6;
+    font-weight: bold;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 2px solid #1e88e5;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+input[type="number"]:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    outline: none;
+}
+
+/* Seleção de Cores */
+.colors-selection {
+    margin-bottom: 30px;
+}
+
+.color-label {
+    display: block;
+    margin-bottom: 15px;
+    color: #90caf9;
+    font-size: 1.1em;
+}
+
+.color-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+.color-btn {
+    flex: 1;
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.color-btn i {
+    font-size: 1.5em;
+}
+
+.color-btn span {
+    font-weight: bold;
+}
+
+.color-btn small {
+    opacity: 0.8;
+}
+
+.color-btn.red {
+    background: linear-gradient(135deg, #d32f2f, #c62828);
+}
+
+.color-btn.black {
+    background: linear-gradient(135deg, #212121, #000000);
+}
+
+.color-btn.green {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+}
+
+input[type="radio"]:checked + .color-btn {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-color: #2196f3;
+}
+
+/* Botão de Aposta */
+.btn-bet {
+    width: 100%;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background: linear-gradient(45deg, #1565c0, #0d47a1);
+    transition: all 0.3s ease;
+}
+
+.btn-content {
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-shine {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255,255,255,0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: 0.5s;
+}
+
+.btn-bet:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(21, 101, 192, 0.4);
+}
+
+.btn-bet:hover .btn-shine {
+    left: 100%;
+    top: 100%;
+}
+
+.btn-bet:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-bet:disabled .btn-shine {
+    display: none;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .color-buttons {
+        flex-direction: column;
+    }
+    
+    .color-btn {
+        padding: 12px;
+    }
+    
+    .saldo-card {
+        flex-direction: column;
+        text-align: center;
+    }
+} 

@@ -1,60 +1,311 @@
 {% extends "base.html" %}
 
 {% block content %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil do Usuário</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styless.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}"> <!-- Novo CSS específico para profile -->
-</head>
-<body>
-    <div class="profile-container">
-        <h1>Perfil de {{ user_info[0] }}</h1>
-        
-        <div class="user-details">
-            <h2>Informações Pessoais</h2>
-            <p><strong>Nome:</strong> {{ user_info[0] }}</p>
-            <p><strong>Email:</strong> {{ user_info[1] }}</p>
-            <p><strong>Data de Nascimento:</strong> {{ user_info[2] }}</p>
-            <p><strong>Saldo na Wallet:</strong> R$ {{ user_info[3] }}</p>
-        </div>
+<div class="profile-container">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0"><i class="fas fa-user-circle me-2"></i>Perfil do Usuário</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-info">
+                            <div class="text-center mb-4">
+                                <div class="avatar-circle mb-3">
+                                    <i class="fas fa-user fa-3x"></i>
+                                    
+                                </div>
+                                
+                                <h2 class="mb-0">{{ user[1] }}</h2>
+                                <p class="text-muted">Membro desde 2024</p>
+                            </div>
 
-        <div class="transaction-history">
-            <h2>Histórico de Transações</h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label class="text-muted">Email</label>
+                                    <p class="mb-0">{{ user[2] }}</p>
+                                </div>
+
+                                <div class="info-item">
+                                    <label class="text-muted">Data de Nascimento</label>
+                                    <p class="mb-0">{{ user[3] }}</p>
+                                </div>
+
+                                <div class="info-item">
+                                    <label class="text-muted">Saldo Atual</label>
+                                    <p class="mb-0 text-success fw-bold">
+                                        R$ {{ "%.2f"|format(session.get('wallet', 0)) }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="transactions-section">
+        <h3>Histórico de Transações</h3>
+        
+        <div class="transactions-table">
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Data</th>
                         <th>Tipo</th>
                         <th>Valor</th>
-                        <th>Data</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% if transacoes %}
-                        {% for transacao in transacoes %}
-                            <tr>
-                                <td>{{ transacao[0] }}</td> <!-- ID da Transação -->
-                                <td>{{ transacao[1] }}</td> <!-- Tipo da Transação -->
-                                <td>R$ {{ transacao[2] }}</td> <!-- Valor da Transação -->
-                                <td>{{ transacao[3].strftime('%Y-%m-%d %H:%M:%S') }}</td> <!-- Data da Transação -->
-                            </tr>
-                        {% endfor %}
+                    {% for transaction in transactions %}
+                    <tr class="tipo-{{ transaction.tipo }}">
+                        <td>{{ transaction.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            {% if transaction.tipo == 1 %}
+                                <i class="fas fa-arrow-up text-green-500"></i> Depósito
+                            {% elif transaction.tipo == 2 %}
+                                <i class="fas fa-arrow-down text-red-500"></i> Saque
+                            {% elif transaction.tipo == 3 %}
+                                <i class="fas fa-dice text-yellow-500"></i> Aposta
+                            {% elif transaction.tipo == 4 %}
+                                <i class="fas fa-trophy text-green-500"></i> Ganho
+                            {% elif transaction.tipo == 5 %}
+                                <i class="fas fa-clock text-yellow-500"></i> Compra Pendente
+                            {% elif transaction.tipo == 6 %}
+                                <i class="fas fa-check text-green-500"></i> Compra Aprovada
+                            {% elif transaction.tipo == 7 %}
+                                <i class="fas fa-times text-red-500"></i> Compra Recusada
+                            {% endif %}
+                        </td>
+                        <td class="amount">
+                            {% if transaction.tipo == 1 %}
+                                <span class="positive">+R$ {{ "%.2f"|format(transaction.valor|abs) }}</span>
+                            {% elif transaction.tipo == 2 %}
+                                <span class="negative">-R$ {{ "%.2f"|format(transaction.valor|abs) }}</span>
+                            {% elif transaction.tipo == 3 %}
+                                <span class="negative">-R$ {{ "%.2f"|format(transaction.valor|abs) }}</span>
+                            {% elif transaction.tipo == 4 %}
+                                <span class="positive">+R$ {{ "%.2f"|format(transaction.valor|abs) }}</span>
+                            {% elif transaction.tipo == 5 %}
+                                <span class="positive">+R$ {{ "%.2f"|format(transaction.valor|abs) }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
                     {% else %}
-                        <tr>
-                            <td colspan="4">Nenhuma transação encontrada.</td>
-                        </tr>
-                    {% endif %}
+                    <tr>
+                        <td colspan="3" class="no-transactions">
+                            Nenhuma transação encontrada
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
-
-        <div class="button-container">
-            <a href="{{ url_for('home') }}" class="btn">
-                <button type="button" class="action-btn">Voltar para Home</button>
-            </a>
-        </div>
     </div>
-</body>
+</div>
+
+<style>
+.avatar-circle {
+    width: 100px;
+    height: 100px;
+    background-color: #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: #6c757d;
+}
+
+.info-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.info-item {
+    padding: 1rem;
+    background-color: #748ca3;
+    border-radius: 8px;
+}
+
+.info-item label {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.info-item p {
+    font-size: 1.1rem;
+}
+
+.profile-container {
+    background-color: #1f2937;
+}
+
+.info-container {
+    background-color: #1f2937;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.profile-header {
+    margin-bottom: 30px;
+}
+
+.profile-header h1 {
+    color: #ffffff;
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.member-since {
+    color: #9ca3af;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.profile-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.profile-actions a {
+    color: #FF4655;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.profile-actions a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para os quadrados brancos */
+.white-box {
+    background-color: #1f2937 !important; /* Forçando a cor escura */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Estilo do botão voltar igual ao de listar_eventos */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.btn-back:hover {
+    background-color: #e63e4c;
+    transform: translateY(-2px);
+}
+
+.btn-back i {
+    font-size: 16px;
+}
+
+.transactions-section {
+    margin-top: 30px;
+    background: #1f2937;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.transactions-section h3 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+.transactions-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #374151;
+    border-radius: 8px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #4b5563;
+}
+
+th {
+    background: #4b5563;
+    color: #e5e7eb;
+    font-weight: 500;
+}
+
+td {
+    color: #d1d5db;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.amount {
+    font-weight: 500;
+}
+
+.positive {
+    color: #10b981 !important; /* Verde */
+    font-weight: bold;
+}
+
+.negative {
+    color: #ef4444 !important; /* Vermelho */
+    font-weight: bold;
+}
+
+.tipo-1 td {
+    color: inherit;
+}
+
+.transactions-table td {
+    color: #d1d5db;
+}
+
+.tipo-1 i { color: #10b981; } /* Depósito */
+.tipo-2 i { color: #ef4444; } /* Saque */
+.tipo-3 i { color: #f59e0b; } /* Aposta */
+.tipo-4 i { color: #10b981; } /* Ganho */
+.tipo-5 i { color: #3b82f6; } /* Reembolso */
+
+.no-transactions {
+    text-align: center;
+    color: #9ca3af;
+    padding: 30px;
+}
+
+tr:hover {
+    background: #4b5563;
+}
+
+i {
+    margin-right: 5px;
+}
+</style>
 {% endblock %}

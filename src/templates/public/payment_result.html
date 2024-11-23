@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="result-container">
+    <div class="result-card {% if success %}success{% else %}error{% endif %}">
+        <div class="result-icon">
+            {% if success %}
+            <i class="fas fa-check-circle"></i>
+            {% else %}
+            <i class="fas fa-times-circle"></i>
+            {% endif %}
+        </div>
+
+        <h2>{{ 'Pagamento Aprovado!' if success else 'Pagamento Negado' }}</h2>
+        
+        <p class="message">{{ message }}</p>
+
+        {% if success %}
+        <div class="details">
+            <div class="detail-item">
+                <span>Valor Depositado:</span>
+                <strong>R$ {{ "%.2f"|format(valor) }}</strong>
+            </div>
+            <div class="detail-item">
+                <span>Novo Saldo:</span>
+                <strong>R$ {{ "%.2f"|format(session.get('wallet', 0)|float) }}</strong>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            {% if success %}
+            <a href="{{ url_for('wallet') }}" class="btn primary">
+                <i class="fas fa-wallet"></i>
+                Ver Carteira
+            </a>
+            {% else %}
+            <a href="{{ url_for('deposito') }}" class="btn primary">
+                <i class="fas fa-redo"></i>
+                Tentar Novamente
+            </a>
+            {% endif %}
+            
+            <a href="{{ url_for('home') }}" class="btn secondary">
+                <i class="fas fa-home"></i>
+                Voltar ao Início
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.result-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.result-card {
+    background: #1f2937;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.result-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.success .result-icon {
+    color: #10b981;
+}
+
+.error .result-icon {
+    color: #ef4444;
+}
+
+.result-card h2 {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.message {
+    color: #9ca3af;
+    margin-bottom: 25px;
+}
+
+.details {
+    background: #374151;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #4b5563;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item span {
+    color: #9ca3af;
+}
+
+.detail-item strong {
+    color: #10b981;
+    font-size: 18px;
+}
+
+.actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn.primary {
+    background: #10b981;
+    color: white;
+}
+
+.btn.secondary {
+    background: #4b5563;
+    color: white;
+}
+
+.success .btn.primary {
+    background: #10b981;
+}
+
+.error .btn.primary {
+    background: #ef4444;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-card {
+    animation: fadeIn 0.5s ease-out;
+}
+</style>
+{% endblock %} 

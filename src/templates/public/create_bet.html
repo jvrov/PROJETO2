@@ -1,59 +1,195 @@
 {% extends "base.html" %}
+
 {% block content %}
-
-<div class="create-event-container">
-    <h1 class="create-event-title">Criar evento</h1>
-    <form action="{{ url_for('create_bet') }}" method="POST" class="event-form">
-        <div class="form-group">
-            <label for="title">Titulo do evento:</label>
-            <input type="text" id="title" name="title" class="form-control" maxlength="50" placeholder="Event title" required>
-        </div>
-
-        <div class="form-group">
-            <label for="description">Descrição (150 digitos):</label>
-            <textarea id="description" name="description" class="form-control" maxlength="150" placeholder="Event description" required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="bet_value">Valor da aposta (minimo de 1.00):</label>
-            <input type="number" id="bet_value" name="bet_value" class="form-control" step="0.01" min="1" required>
-        </div>
-
-        <div class="form-group datetime-group">
-            <label for="start_time">Data de inicio:</label>
-            <input type="datetime-local" id="start_time" name="start_time" class="form-control" required>
-        </div>
-
-        <div class="form-group datetime-group">
-            <label for="end_time">Data de termino:</label>
-            <input type="datetime-local" id="end_time" name="end_time" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-            <label for="event_date">Data do evento:</label>
-            <input type="date" id="event_date" name="event_date" class="form-control" required>
-        </div>
-
-        <button type="submit" class="submit-btn">Criar evento</button>
-    </form>
-
-    <div class="button-container">
-        <a href="{{ url_for('home') }}">
-            <button type="button" class="back-btn">Voltar para tela inicial</button>
-        </a>
+<div class="create-bet-container">
+    <div class="create-bet-header">
+        <h1>Criar Novo Evento</h1>
+        <p>Configure as informações do seu evento</p>
     </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form class="create-bet-form" method="POST" action="{{ url_for('create_bet') }}">
+        <div class="form-group">
+            <label for="title">Título do Evento</label>
+            <input type="text" id="title" name="title" required 
+                   placeholder="Ex: Final do Campeonato">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea id="description" name="description" required 
+                      placeholder="Descreva os detalhes do evento..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="bet_value">Valor da Cota</label>
+            <input type="number" id="bet_value" name="bet_value" step="0.01" required 
+                   placeholder="Valor minimo R$ 1,00">
+        </div>
+
+        <div class="form-group">
+            <label for="start_time">Início das Apostas</label>
+            <input type="datetime-local" id="start_time" name="start_time" required>
+        </div>
+
+        <div class="form-group">
+            <label for="end_time">Fim das Apostas</label>
+            <input type="datetime-local" id="end_time" name="end_time" required>
+        </div>
+
+        <div class="form-group">
+            <label for="event_date">Data do Evento</label>
+            <input type="datetime-local" id="event_date" name="event_date" required>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-create">Criar Evento</button>
+            <a href="{{ url_for('meus_eventos') }}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
 </div>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<style>
+    .create-bet-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #1f2937;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-<ul class="flashes">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <li class="{{ message.category }}">{{ message }}</li>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </ul>
+    .create-bet-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
+    .create-bet-header h1 {
+        color: #ffffff;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .create-bet-header p {
+        color: #9ca3af;
+    }
+
+    .create-bet-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group label {
+        color: #e5e7eb;
+        font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #374151;
+        background: #111827;
+        color: #ffffff;
+        font-size: 1rem;
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #6b7280;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .btn-create,
+    .btn-cancel {
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        text-align: center;
+        transition: all 0.3s ease;
+        flex: 1;
+    }
+
+    .btn-create {
+        background: #3b82f6;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-create:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    .btn-cancel {
+        background: #374151;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #4b5563;
+        transform: translateY(-1px);
+    }
+
+    /* Responsividade */
+    @media (max-width: 640px) {
+        .create-bet-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+
+    /* Estilo para os inputs de data em branco */
+    input[type="datetime-local"] {
+        color: #ffffff !important;
+        background: #111827;
+    }
+
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+        opacity: 0.7;
+    }
+</style>
 {% endblock %}
