@@ -14,19 +14,7 @@ Backend: Python, Flask
 Banco de Dados: MySQL
 Frontend: HTML, CSS (com Bootstrap)
 Controle de versão: Git
-Estrutura do Projeto
-plaintext
-Copiar código
-├── controllers/         # Contém os controladores para a lógica do site (ex. login, eventos)
-├── models/              # Contém as definições das tabelas do banco de dados
-├── static/              # Contém arquivos estáticos (CSS, imagens)
-│   └── css/             # Arquivo CSS personalizado
-├── templates/           # Contém os arquivos HTML para as páginas da plataforma
-│   ├── home.html        # Página principal
-│   ├── login.html       # Tela de login
-│   └── deposito.html    # Tela para adicionar saldo
-├── app.py               # Arquivo principal de execução do Flask
-└── requirements.txt     # Dependências do projeto
+
 Como Rodar o Projeto
 1. Clone o repositório:
 bash
@@ -58,7 +46,7 @@ pip install -r requirements.txt
 bash
 Copiar código
 python app.py
-8. Abra o navegador e acesse http://127.0.0.1:5000.
+8. Abra o navegador e acesse http://127.0.0.1:4000.
 Contribuições
 Se você deseja contribuir para o desenvolvimento deste projeto, sinta-se à vontade para enviar um pull request. Fique à vontade para relatar bugs, sugerir melhorias ou corrigir problemas que encontrar.
 
