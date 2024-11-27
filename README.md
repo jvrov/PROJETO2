@@ -19,7 +19,7 @@ Como Rodar o Projeto
 1. Clone o repositório:
 bash
 Copiar código
-git clone https://github.com/seu-usuario/site-apostas.git
+git clone [https://github.com/seu-usuario/site-apostas.git](https://github.com/jvrov/PROJETO2.git)
 2. Navegue até o diretório do projeto:
 bash
 Copiar código
