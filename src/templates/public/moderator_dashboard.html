@@ -100,11 +100,11 @@
                                         <td>{{ participacao.status }}</td>
                                         <td class="text-center">
                                             <button class="btn btn-success btn-sm btn-action me-2" 
-                                                    onclick="aprovarParticipacao({{ participacao.id }})">
+                                                    onclick="aprovarParticipacao('{{ participacao.id }}')">
                                                 Aprovar
                                             </button>
                                             <button class="btn btn-danger btn-sm btn-action" 
-                                                    onclick="recusarParticipacao({{ participacao.id }})">
+                                                    onclick="recusarParticipacao('{{ participacao.id }}')">
                                                 Recusar
                                             </button>
                                         </td>
@@ -146,7 +146,7 @@
                                         <td>{{ evento.data_evento.strftime('%d/%m/%Y') }}</td>
                                         <td class="text-center">
                                             <button class="btn btn-success btn-sm btn-action me-2" 
-                                                    onclick="aprovarEvento({{ evento.id }})">
+                                                    onclick="aprovarEvento('{{ evento.id }}')">
                                                 Aprovar
                                             </button>
                                             <button class="btn btn-danger btn-sm btn-action" 

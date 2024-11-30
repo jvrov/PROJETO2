@@ -1194,6 +1194,94 @@ class JogoCorController(MethodView):
             if 'connection' in locals():
                 connection.close()
 
+    def post(self):
+        if 'user_id' not in session:
+            return jsonify({
+                'success': False,
+                'message': 'Usuário não está logado'
+            })
+
+        try:
+            data = request.get_json()
+            valor_apostado = float(data.get('valor_apostado'))
+            cor_apostada = data.get('cor_apostada')
+            user_id = session['user_id']
+
+            connection = self.get_db_connection()
+            cursor = connection.cursor()
+
+            # Verificar saldo
+            cursor.execute('SELECT wallet FROM users WHERE id = %s', (user_id,))
+            user = cursor.fetchone()
+
+            # Corrigido: acessar o saldo diretamente da primeira coluna
+            if not user or float(user[0]) < valor_apostado:
+                return jsonify({
+                    'success': False,
+                    'message': 'Saldo insuficiente'
+                })
+
+            # Gerar resultado
+            probabilidades = {
+                'vermelho': 0.45,
+                'preto': 0.45,
+                'verde': 0.10
+            }
+            cores = list(probabilidades.keys())
+            pesos = list(probabilidades.values())
+            cor_sorteada = random.choices(cores, weights=pesos)[0]
+
+            # Calcular resultado
+            ganhou = cor_apostada == cor_sorteada
+            multiplicador = 14 if cor_sorteada == 'verde' else 2
+            valor_ganho = valor_apostado * multiplicador if ganhou else 0
+
+            # Atualizar saldo - Corrigido para usar user[0]
+            novo_saldo = float(user[0]) - valor_apostado
+            if ganhou:
+                novo_saldo += valor_ganho
+
+            cursor.execute('UPDATE users SET wallet = %s WHERE id = %s', 
+                         (novo_saldo, user_id))
+
+            # Registrar aposta
+            cursor.execute('''
+                INSERT INTO color_bet 
+                (user_id, valor_apostado, cor_apostada, cor_sorteada, 
+                 multiplicador, valor_ganho, status, data_aposta)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
+            ''', (
+                user_id, valor_apostado, cor_apostada, cor_sorteada,
+                multiplicador, valor_ganho, 'ganhou' if ganhou else 'perdeu'
+            ))
+
+            connection.commit()
+
+            return jsonify({
+                'success': True,
+                'resultado': {
+                    'cor_sorteada': cor_sorteada,
+                    'ganhou': ganhou,
+                    'valor_ganho': valor_ganho,
+                    'novo_saldo': novo_saldo
+                }
+            })
+
+        except Exception as e:
+            print(f"Erro ao processar aposta: {str(e)}")
+            if 'connection' in locals():
+                connection.rollback()
+            return jsonify({
+                'success': False,
+                'message': f'Erro ao processar aposta: {str(e)}'
+            })
+
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+            if 'connection' in locals():
+                connection.close()
+
 class GetBalanceController(MethodView):
     def get(self):
         if 'user_id' not in session:

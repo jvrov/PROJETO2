@@ -2,66 +2,102 @@
 
 {% block content %}
 <div class="game-container">
-    <!-- Área do Jogo -->
     <div class="game-area">
-        <!-- Ícone do Dado -->
-        <div class="dice-icon">
-            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="80" height="80" rx="10" fill="white"/>
-                <circle cx="20" cy="20" r="5" fill="#1F2937"/>
-                <circle cx="60" cy="20" r="5" fill="#1F2937"/>
-                <circle cx="20" cy="40" r="5" fill="#1F2937"/>
-                <circle cx="60" cy="40" r="5" fill="#1F2937"/>
-                <circle cx="20" cy="60" r="5" fill="#1F2937"/>
-                <circle cx="60" cy="60" r="5" fill="#1F2937"/>
-            </svg>
+        <!-- Título do Jogo -->
+        <div class="game-header">
+            <h1><i class="fas fa-dice"></i> Dados VIP</h1>
+            <p class="subtitle">Escolha um número, faça sua aposta e multiplique seus ganhos!</p>
         </div>
 
-        <!-- Formulário de Aposta -->
         <div class="bet-form">
+            <!-- Seletor de Números -->
             <div class="form-group">
-                <label>Valor da Aposta</label>
-                <div class="input-wrapper">
-                    <span class="prefix">R$</span>
-                    <input type="number" id="valor_aposta" name="valor_aposta" step="0.01" required>
+                <label><i class="fas fa-dice-d6"></i> Escolha seu Número</label>
+                <div class="number-grid">
+                    {% for i in range(1, 7) %}
+                    <button type="button" 
+                            class="number-btn" 
+                            data-number="{{ i }}"
+                            onclick="selectNumber(this, {{ i }})">
+                        {{ i }}
+                    </button>
+                    {% endfor %}
+                </div>
+                <input type="hidden" id="numero_escolhido" name="numero_escolhido" required>
+            </div>
+
+            <!-- Input de Valor -->
+            <div class="form-group">
+                <label><i class="fas fa-coins"></i> Valor da Aposta</label>
+                <div class="value-input">
+                    <span class="currency">R$</span>
+                    <input type="number" 
+                           id="valor_aposta" 
+                           name="valor_aposta" 
+                           step="0.01" 
+                           placeholder="Digite o valor"
+                           required>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Número Escolhido (1-6)</label>
-                <input type="number" id="numero_escolhido" name="numero_escolhido" min="1" max="6" required>
-            </div>
-
-            <button onclick="apostar()" class="btn-apostar">
-                <i class="fas fa-dice"></i> Apostar
+            <!-- Botão de Apostar -->
+            <button onclick="apostar()" class="btn-bet">
+                <i class="fas fa-dice"></i>
+                Fazer Aposta
             </button>
+        </div>
 
-            <!-- Área de Resultados -->
-            <div class="resultados">
-                <div id="numero-sorteado"></div>
-                <div id="resultado-aposta"></div>
+        <!-- Card de Resultado -->
+        <div id="resultado-container" class="resultado-container" style="display: none;">
+            <div class="resultado-card">
+                <div class="resultado-header">
+                    <div class="header-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2 id="status-texto">Resultado</h2>
+                </div>
+                
+                <div class="resultado-body">
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <div class="result-label">Número Sorteado</div>
+                            <div id="numero-sorteado" class="result-value"></div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Sua Aposta</div>
+                            <div id="valor-apostado" class="result-value"></div>
+                        </div>
+                    </div>
+                    <div id="resultado-aposta" class="resultado-final"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Histórico de Apostas -->
+    <!-- Histórico -->
     <div class="historico-area">
-        <h2>Histórico de Apostas</h2>
+        <div class="historico-header">
+            <h2><i class="fas fa-history"></i> Histórico</h2>
+        </div>
         <div class="historico-list">
             {% for transacao in transacoes %}
             <div class="historico-item">
-                <div class="aposta-info">
-                    <div class="numero-valor">
-                        <span>Número:</span>
-                        <span class="valor">R$ {{ "%.2f"|format(transacao.valor) }}</span>
-                    </div>
-                    <div class="resultado">
-                        <span>Resultado:</span>
+                <div class="transacao-info">
+                    <div class="transacao-valor">
                         {% if transacao.tipo == 4 %}
-                        <span class="ganho">+R$ {{ "%.2f"|format(transacao.valor) }}</span>
+                        <span class="badge ganho">
+                            <i class="fas fa-arrow-up"></i>
+                            +R$ {{ "%.2f"|format(transacao.valor) }}
+                        </span>
                         {% else %}
-                        <span class="perda">-R$ {{ "%.2f"|format(transacao.valor) }}</span>
+                        <span class="badge perda">
+                            <i class="fas fa-arrow-down"></i>
+                            -R$ {{ "%.2f"|format(transacao.valor) }}
+                        </span>
                         {% endif %}
+                    </div>
+                    <div class="transacao-data">
+                        {{ transacao.data.strftime('%H:%M:%S') }}
                     </div>
                 </div>
             </div>
@@ -73,224 +109,274 @@
 <style>
 .game-container {
     display: grid;
-    grid-template-columns: 1fr 400px;
+    grid-template-columns: 1fr 350px;
     gap: 20px;
     padding: 20px;
-    color: white;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.game-header h1 {
+    font-size: 2.5em;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #9ca3af;
+    font-size: 1.1em;
 }
 
 .game-area {
     background: #1f2937;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.dice-icon {
-    text-align: center;
-    margin: 40px auto;
-    width: 80px;
-    height: 80px;
+/* Seletor de Números */
+.number-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-top: 10px;
 }
 
-.bet-form {
-    max-width: 400px;
-    margin: 0 auto;
+.number-btn {
+    background: #374151;
+    border: 2px solid #4b5563;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.form-group {
-    margin-bottom: 20px;
+.number-btn:hover {
+    background: #4b5563;
+    transform: translateY(-2px);
 }
 
-.form-group label {
-    display: block;
-    color: #9ca3af;
-    margin-bottom: 8px;
+.number-btn.selected {
+    background: #ef4444;
+    border-color: #ef4444;
+    animation: pulse 1s infinite;
 }
 
-.input-wrapper {
+/* Input de Valor */
+.value-input {
     position: relative;
+    margin-top: 10px;
 }
 
-.prefix {
+.currency {
     position: absolute;
-    left: 12px;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
     color: #9ca3af;
 }
 
-input {
+input[type="number"] {
     width: 100%;
-    padding: 12px;
-    padding-left: 35px;
+    padding: 15px;
+    padding-left: 45px;
     background: #374151;
-    border: none;
-    border-radius: 6px;
+    border: 2px solid #4b5563;
+    border-radius: 10px;
     color: white;
-    font-size: 16px;
+    font-size: 1.1em;
 }
 
-.btn-apostar {
+/* Botão de Aposta */
+.btn-bet {
     width: 100%;
-    padding: 12px;
-    background: #ff4655;
-    color: white;
+    padding: 15px;
+    margin-top: 20px;
+    background: linear-gradient(45deg, #ef4444, #dc2626);
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.2em;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-.btn-apostar:hover {
-    background: #e6404d;
+.btn-bet:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-.historico-area {
-    background: #1f2937;
-    border-radius: 8px;
+/* Card de Resultado */
+.resultado-container {
+    margin-top: 30px;
+}
+
+.resultado-card {
+    background: #374151;
+    border-radius: 15px;
+    overflow: hidden;
+    animation: slideIn 0.5s ease-out;
+}
+
+.resultado-header {
+    background: linear-gradient(45deg, #1f2937, #374151);
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.header-icon {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
     padding: 20px;
 }
 
-.historico-area h2 {
-    margin-bottom: 20px;
-    color: white;
+.result-item {
+    background: #1f2937;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.result-label {
+    color: #9ca3af;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.result-value {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.resultado-final {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 20px;
+    background: #1f2937;
+    margin: 0 20px 20px;
+    border-radius: 10px;
+}
+
+/* Histórico */
+.historico-area {
+    background: #1f2937;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.historico-header {
+    background: linear-gradient(45deg, #1f2937, #374151);
+    padding: 20px;
+    text-align: center;
 }
 
 .historico-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 20px;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .historico-item {
     background: #374151;
-    border-radius: 6px;
+    border-radius: 10px;
     padding: 15px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.5s ease-out;
 }
 
-.aposta-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.numero-valor, .resultado {
+.transacao-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.valor {
-    color: #9ca3af;
-}
-
-.ganho {
-    color: #10b981;
-}
-
-.perda {
-    color: #ef4444;
-}
-
-.resultado {
-    background: #374151;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
-    text-align: center;
-}
-
-.resultado-content {
+.badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: bold;
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    align-items: center;
+    gap: 5px;
 }
 
-.numero-sorteado {
-    font-size: 18px;
-}
-
-.mensagem {
-    font-size: 20px;
-    font-weight: bold;
-    padding: 10px;
-}
-
-.mensagem.ganhou {
+.badge.ganho {
+    background: #065f46;
     color: #10b981;
 }
 
-.mensagem.perdeu {
+.badge.perda {
+    background: #7f1d1d;
     color: #ef4444;
 }
 
-.saldo-atual {
-    font-size: 18px;
-}
-
-.label {
+.transacao-data {
     color: #9ca3af;
-    margin-right: 10px;
+    font-size: 0.9em;
 }
 
-.value {
-    color: white;
-    font-weight: bold;
+/* Animações */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.mensagem-resultado {
-    background: #374151;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 20px;
-    text-align: center;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-.numero-sorteado {
-    font-size: 18px;
-    margin-bottom: 10px;
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
-.resultado-valor {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.resultado-valor.ganho {
+.ganhou {
     color: #10b981;
+    animation: pulse 1s infinite;
 }
 
-.resultado-valor.perda {
+.perdeu {
     color: #ef4444;
-}
-
-.resultados {
-    margin-top: 20px;
-    text-align: center;
-    color: white;
-    font-size: 18px;
-    background: #374151;
-    padding: 15px;
-    border-radius: 8px;
-}
-
-#numero-sorteado {
-    margin-bottom: 10px;
-}
-
-#resultado-aposta.ganhou {
-    color: #10b981;
-    font-weight: bold;
-}
-
-#resultado-aposta.perdeu {
-    color: #ef4444;
-    font-weight: bold;
 }
 </style>
 
 <script>
+function selectNumber(btn, num) {
+    document.querySelectorAll('.number-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('numero_escolhido').value = num;
+}
+
 function apostar() {
     const valor_aposta = document.getElementById('valor_aposta').value;
     const numero_escolhido = document.getElementById('numero_escolhido').value;
@@ -309,31 +395,36 @@ function apostar() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Resposta:', data); // Para debug
+        document.getElementById('numero-sorteado').textContent = data.numero_sorteado;
+        document.getElementById('valor-apostado').textContent = `R$ ${parseFloat(valor_aposta).toFixed(2)}`;
         
-        // Mostra o número sorteado
-        const numeroSorteadoDiv = document.getElementById('numero-sorteado');
-        numeroSorteadoDiv.textContent = `Número sorteado: ${data.numero_sorteado}`;
-        
-        // Mostra o resultado
         const resultadoDiv = document.getElementById('resultado-aposta');
+        const statusTexto = document.getElementById('status-texto');
+        const headerIcon = document.querySelector('.header-icon i');
+        
         if (data.ganhou) {
-            resultadoDiv.textContent = `Ganhou: R$ ${(valor_aposta * 5).toFixed(2)}`;
-            resultadoDiv.className = 'ganhou';
+            statusTexto.textContent = '🎉 VOCÊ GANHOU! 🎉';
+            headerIcon.className = 'fas fa-trophy';
+            resultadoDiv.textContent = `+R$ ${(valor_aposta * 5).toFixed(2)}`;
+            resultadoDiv.className = 'resultado-final ganhou';
         } else {
-            resultadoDiv.textContent = `Perdeu: R$ ${parseFloat(valor_aposta).toFixed(2)}`;
-            resultadoDiv.className = 'perdeu';
+            statusTexto.textContent = '😢 VOCÊ PERDEU';
+            headerIcon.className = 'fas fa-times-circle';
+            resultadoDiv.textContent = `-R$ ${parseFloat(valor_aposta).toFixed(2)}`;
+            resultadoDiv.className = 'resultado-final perdeu';
         }
         
-        // Atualiza o saldo
-        const saldoElement = document.getElementById('saldo');
+        document.getElementById('resultado-container').style.display = 'block';
+        
         if (saldoElement) {
             saldoElement.textContent = data.novo_saldo;
         }
         
-        // Limpa os campos
         document.getElementById('valor_aposta').value = '';
         document.getElementById('numero_escolhido').value = '';
+        document.querySelectorAll('.number-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
     })
     .catch(error => {
         console.error('Erro:', error);
