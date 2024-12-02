@@ -6,8 +6,10 @@ import random
 from decimal import Decimal
 from datetime import datetime
 import traceback
-from flask_mail import Message
+from flask_mail import Message, Mail
 
+# Initialize Flask-Mail
+mail = Mail()
 
 def get_db_connection():
     return pymysql.connect(
@@ -248,7 +250,7 @@ class ModeratorDashboardController(MethodView):
             # Buscar eventos pendentes
             cursor.execute('''
                 SELECT * FROM eventos_pendentes 
-                WHERE status = 'pending'
+                WHERE status = 'pendente'
             ''')
             eventos_pendentes = cursor.fetchall()
             print(f"Eventos pendentes encontrados: {len(eventos_pendentes)}")
@@ -270,7 +272,7 @@ class ModeratorDashboardController(MethodView):
                                 
         except Exception as e:
             print(f"\nErro no dashboard do moderador: {str(e)}")
-            traceback.print_exc()  # Isso vai mostrar o stack trace completo
+            traceback.print_exc()
             return redirect(url_for('home'))
             
         finally:
@@ -282,7 +284,9 @@ class ModeratorDashboardController(MethodView):
 
 class EventApprovalController(MethodView):
     def post(self, event_id, action):
-        print(f"\n=== Iniciando {action} do evento {event_id} ===")
+        print(f"\n=== INICIANDO AÇÃO NO EVENTO {event_id} ===")
+        print(f"Ação recebida: {action}")
+        
         try:
             connection = pymysql.connect(
                 host='localhost',
@@ -293,81 +297,87 @@ class EventApprovalController(MethodView):
             )
             cursor = connection.cursor()
 
-            if action == 'approve':
-                print("Buscando evento pendente...")
-                cursor.execute("""
-                    SELECT * FROM eventos_pendentes 
-                    WHERE id = %s AND status = 'pending'
-                """, (event_id,))
-                evento = cursor.fetchone()
-                
-                if evento:
-                    print("Evento encontrado:", evento)
-                    try:
-                        print("Inserindo na tabela events...")
-                        cursor.execute("""
-                            INSERT INTO events 
-                            (titulo, descricao, valor_cota, inicio_apostas, 
-                             fim_apostas, data_evento, user_id, aprovado)
-                            VALUES 
-                            (%s, %s, %s, %s, %s, %s, %s, 1)
-                        """, (
-                            evento['titulo'],
-                            evento['descricao'],
-                            evento['valor_cota'],
-                            evento['inicio_apostas'],
-                            evento['fim_apostas'],
-                            evento['data_evento'],
-                            evento['user_id']
-                        ))
-                        
-                        print("Atualizando status na tabela eventos_pendentes...")
-                        cursor.execute("""
-                            UPDATE eventos_pendentes 
-                            SET status = 'approved'
-                            WHERE id = %s
-                        """, (event_id,))
-                        
-                        connection.commit()
-                        print("Transação commitada com sucesso!")
-                        return jsonify({'success': True, 'message': 'Evento aprovado com sucesso!'})
-                        
-                    except Exception as e:
-                        print(f"ERRO durante aprovação: {str(e)}")
-                        connection.rollback()
-                        return jsonify({'error': str(e)}), 500
-                else:
-                    print("Evento não encontrado ou já processado")
-                    return jsonify({'error': 'Evento não encontrado ou já processado'}), 404
+            # Buscar evento e informações do usuário
+            cursor.execute('''
+                SELECT ep.*, u.email, u.username 
+                FROM eventos_pendentes ep
+                JOIN users u ON ep.user_id = u.id
+                WHERE ep.id = %s
+            ''', (event_id,))
+            evento = cursor.fetchone()
+            
+            if not evento:
+                print(f"Evento {event_id} não encontrado!")
+                return jsonify({'success': False, 'message': 'Evento não encontrado'})
 
-            elif action == 'reject':
-                dados = request.get_json()
-                motivos = dados.get('motivos', [])
-                print(f"Rejeitando evento com motivos: {motivos}")
+            print(f"Evento encontrado: {evento}")
+
+            if action == 'reject':
+                print("Executando rejeição do evento...")
+                motivos = request.json.get('motivos', [])
+                print(f"Motivos da rejeição: {motivos}")
+                motivos_texto = ', '.join(motivos)
                 
-                cursor.execute("""
+                # Atualizar status e motivos
+                cursor.execute('''
                     UPDATE eventos_pendentes 
                     SET status = 'rejected',
                         motivos_rejeicao = %s
-                    WHERE id = %s AND status = 'pending'
-                """, (', '.join(motivos), event_id))
+                    WHERE id = %s
+                ''', (motivos_texto, event_id))
                 
                 connection.commit()
-                print("Evento rejeitado com sucesso!")
-                return jsonify({'success': True, 'message': 'Evento rejeitado com sucesso!'})
+                print(f"Evento {event_id} rejeitado com sucesso!")
+                print(f"Motivos salvos: {motivos_texto}")
+                
+                # Enviar email de notificação
+                try:
+                    msg = Message(
+                        subject='Seu evento foi rejeitado',
+                        sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                        recipients=[evento['email']]
+                    )
                     
+                    msg.html = render_template(
+                        'emails/event_rejected.html',
+                        username=evento['username'],
+                        event_title=evento['titulo'],
+                        motivos=motivos
+                    )
+                    
+                    mail.send(msg)
+                    print(f"Email enviado para {evento['email']}")
+                    
+                except Exception as e:
+                    print(f"Erro ao enviar email: {str(e)}")
+                
+                return jsonify({'success': True, 'message': 'Evento rejeitado com sucesso!'})
+            
+            elif action == 'approve':
+                print("Executando aprovação do evento...")
+                cursor.execute('''
+                    UPDATE eventos_pendentes 
+                    SET status = 'approved' 
+                    WHERE id = %s
+                ''', (event_id,))
+                
+                connection.commit()
+                print(f"Evento {event_id} aprovado com sucesso!")
+                
+                return jsonify({'success': True, 'message': 'Evento aprovado com sucesso!'})
+
         except Exception as e:
-            print(f"ERRO GERAL: {str(e)}")
+            print(f"ERRO ao processar evento: {str(e)}")
             if connection:
                 connection.rollback()
-            return jsonify({'error': str(e)}), 500
-            
+            return jsonify({'success': False, 'message': str(e)})
+
         finally:
             if cursor:
                 cursor.close()
             if connection:
                 connection.close()
-            print("=== Finalizado ===\n")
+            print("=== FIM DO PROCESSAMENTO ===\n")
 
 class EventosAgoraController(MethodView):
     def get(self):
@@ -524,8 +534,8 @@ class CreateBetController(MethodView):
                 # Modificando a query para incluir is_approved = 0
                 sql = """
                     INSERT INTO eventos_pendentes (titulo, descricao, valor_cota, inicio_apostas, 
-                                      fim_apostas, data_evento, user_id)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                                      fim_apostas, data_evento, user_id, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'pendente')
                 """
                 cursor.execute(sql, (title, description, bet_value, start_time, 
                                    end_time, event_date, session['user_id']))
@@ -804,7 +814,7 @@ class ParticipateController(MethodView):
                     inserted_participation = cursor.fetchone()
                     print(f"Participação registrada na tabela: {inserted_participation}")  # Print da nova participação
                     
-                    # Adiciona a transação na tabela de transações
+                    # Adiciona a transaão na tabela de transações
                     cursor.execute(
                         "INSERT INTO transacoes (user_id, tipo, valor) VALUES (%s, %s, %s)",
                         (user_id, 'participacao', event_value)
@@ -1539,7 +1549,7 @@ class ParticipateController(MethodView):
                         VALUES (%s, %s, %s)
                     """, (user_id, event_id, confirmation_value))
                     
-                    # Adiciona a transação
+                    # Adiciona a transaão
                     cursor.execute("""
                         INSERT INTO transacoes (user_id, tipo, valor) 
                         VALUES (%s, %s, %s)
